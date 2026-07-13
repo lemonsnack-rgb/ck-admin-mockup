@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>기본 적용 정책 설정 · CK 관리기</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-active="ck-default">
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-row">
+        <button class="panel-toggle" data-panel-toggle title="사이드바 접기"></button>
+        <nav class="breadcrumb"><span>CK 관리기</span><span class="sep">›</span><span>기능별 이용 제한 정책 관리</span><span class="sep">›</span><span class="cur">기본 적용 정책 설정</span></nav>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card"><div class="card-body">
+        <h1 class="page-title">기본 적용 정책 설정</h1>
+        <p class="page-sub">도메인과 무관하게 해당 서비스에 공통 적용되는 기본 정책입니다. 개별(도메인별) 정책이 없으면 이 값이 자동 적용됩니다.</p>
+
+        <!-- 서비스 목록: 번호 / 서비스명 / 기본 사용여부 / 기본 이용기간 / 기본 일일한도 -->
+        <div class="table-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th style="width:64px">번호</th>
+                <th class="left">서비스명</th>
+                <th>기본 사용여부</th>
+                <th class="left">기본 이용기간</th>
+                <th>기본 일일한도</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <p class="mt-note">※ 서비스가 추가되면 이 목록에 행이 하나 추가됩니다. 서비스별 공통 기본 정책을 여기서 등록하고, 특정 도메인만 다르게 하려면 <b>도메인별 정책 설정</b>에서 지정합니다.</p>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<!-- 기본 정책 편집 다이얼로그 -->
+<div class="overlay" id="dlg">
+  <div class="dialog" style="max-width:600px">
+    <div class="dialog-head">
+      <div class="dialog-title">기본 적용 정책 — <span id="dlgSvc">참고문헌 유효성 검증</span></div>
+      <div class="dialog-desc">도메인 공통 기본 정책</div>
+    </div>
+    <div class="dialog-body">
+      <div class="form-row">
+        <div class="lbl">기본 사용여부</div>
+        <div class="ctl">
+          <label class="switch"><input type="checkbox" id="useSwitch" checked onchange="onUse()"><span class="track"></span></label>
+          <span id="useLabel">사용함</span>
+        </div>
+      </div>
+      <div id="subFields">
+        <div class="form-row"><div class="lbl">기본 이용기간</div><div class="ctl" style="flex-direction:column;align-items:flex-start;gap:14px">
+          <div class="opt">
+            <label><input type="radio" name="pmode" checked onchange="setMode('rel')"><span style="white-space:nowrap">등록일 기준</span> <input class="input sm" type="number" value="14" id="relDays" style="width:72px"> 일</label>
+            <div class="opt-help">기관 등록일부터 N일간 이용 · 신규 기관 온보딩 체험(기관마다 종료일이 다름)</div>
+          </div>
+          <div class="opt">
+            <label><input type="radio" name="pmode" onchange="setMode('abs')"><span style="white-space:nowrap">종료일 지정</span> <input class="input sm" type="date" value="2026-12-31" id="absEnd" disabled style="width:160px"></label>
+            <div class="opt-help">지정한 날짜에 전체(미설정 기관) 동시 종료 · 무료→유료 일괄 전환용</div>
+          </div>
+          <div class="opt">
+            <label><input type="radio" name="pmode" onchange="setMode('inf')"><span style="white-space:nowrap">무기한</span></label>
+            <div class="opt-help">종료일 없이 상시 이용</div>
+          </div>
+        </div></div>
+        <div class="form-row"><div class="lbl">기본 일일한도</div><div class="ctl">
+          <input class="input sm" type="number" value="3" id="limitInput" style="width:90px"> 회 / 일
+          <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('limitInput').disabled=this.checked"> 무제한</label></div></div>
+      </div>
+      <div class="hint">개별(도메인별) 정책이 없는 모든 도메인에 이 기본값이 적용됩니다.</div>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn btn-outline" onclick="closeDialog('dlg')">취소</button>
+      <button class="btn btn-primary" onclick="openDialog('warn')">저장</button>
+    </div>
+  </div>
+</div>
+
+<!-- 기본 정책 변경 경고 -->
+<div class="overlay" id="warn">
+  <div class="dialog">
+    <div class="dialog-head">
+      <div class="dialog-title">기본 정책을 변경할까요?</div>
+      <div class="dialog-desc">이 기본값을 따르는 <b>미설정 기관 312개</b>의 이용 기간이 재계산됩니다. 개별 정책이 설정된 기관은 영향받지 않습니다.</div>
+    </div>
+    <div class="dialog-foot">
+      <button class="btn btn-outline" onclick="closeDialog('warn')">취소</button>
+      <button class="btn btn-primary" onclick="closeDialog('warn'); closeDialog('dlg'); toast('저장되었습니다.')">변경</button>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  function useBadge(u){ return u==='Y'?'<span class="badge">사용</span>':'<span class="badge unused">미사용</span>'; }
+  // [번호, 서비스명, 기본사용여부, 기본이용기간(시작~종료/무기한), 기본일일한도]
+  const svcs=[
+    ['1','참고문헌 유효성 검증','Y','가입일 기준 14일','3'],
+  ];
+  document.getElementById('rows').innerHTML = svcs.map(s=>`
+    <tr>
+      <td class="muted">${s[0]}</td>
+      <td class="left"><b style="font-weight:600">${s[1]}</b></td>
+      <td>${useBadge(s[2])}</td>
+      <td class="left ${s[3]==='—'?'muted':''}">${s[3]}</td>
+      <td class="num ${s[4]==='—'?'muted':''}">${s[4]}</td>
+      <td><button class="btn btn-outline sm" onclick="openEdit('${s[1]}')">편집</button></td>
+    </tr>`).join('');
+
+  function openEdit(name){ document.getElementById('dlgSvc').textContent=name; openDialog('dlg'); }
+  function onUse(){ const on=document.getElementById('useSwitch').checked;
+    document.getElementById('useLabel').textContent=on?'사용함':'사용 안 함';
+    document.getElementById('subFields').classList.toggle('disabled-block',!on); }
+  function setMode(m){ document.getElementById('relDays').disabled=m!=='rel'; document.getElementById('absEnd').disabled=m!=='abs'; }
+</script>
+</body>
+</html>
