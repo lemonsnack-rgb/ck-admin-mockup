@@ -43,7 +43,7 @@
   </div>
 </div>
 
-<!-- 기본 정책 편집 다이얼로그 -->
+<!-- 기본 정책 수정 다이얼로그 -->
 <div class="overlay" id="dlg">
   <div class="dialog" style="max-width:600px">
     <div class="dialog-head">
@@ -59,20 +59,9 @@
         </div>
       </div>
       <div id="subFields">
-        <div class="form-row"><div class="lbl">기본 이용기간</div><div class="ctl" style="flex-direction:column;align-items:flex-start;gap:14px">
-          <div class="opt">
-            <label><input type="radio" name="pmode" checked onchange="setMode('rel')"><span style="white-space:nowrap">등록일 기준</span> <input class="input sm" type="number" value="14" id="relDays" style="width:72px"> 일</label>
-            <div class="opt-help">기관 등록일부터 N일간 이용 · 신규 기관 온보딩 체험(기관마다 종료일이 다름)</div>
-          </div>
-          <div class="opt">
-            <label><input type="radio" name="pmode" onchange="setMode('abs')"><span style="white-space:nowrap">종료일 지정</span> <input class="input sm" type="date" value="2026-12-31" id="absEnd" disabled style="width:160px"></label>
-            <div class="opt-help">지정한 날짜에 전체(미설정 기관) 동시 종료 · 무료→유료 일괄 전환용</div>
-          </div>
-          <div class="opt">
-            <label><input type="radio" name="pmode" onchange="setMode('inf')"><span style="white-space:nowrap">무기한</span></label>
-            <div class="opt-help">종료일 없이 상시 이용</div>
-          </div>
-        </div></div>
+        <div class="form-row"><div class="lbl">기본 이용기간</div><div class="ctl">
+          <span class="badge">무기한</span>
+          <span class="field-help">기본 이용기간은 <b>무기한</b>으로 고정입니다(별도 기간 설정 없음). 기간 제한이 필요한 도메인은 <b>도메인별 정책 설정</b>에서 개별 지정합니다.</span></div></div>
         <div class="form-row"><div class="lbl">기본 일일한도</div><div class="ctl">
           <input class="input sm" type="number" value="3" id="limitInput" style="width:90px"> 회 / 일
           <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('limitInput').disabled=this.checked"> 무제한</label></div></div>
@@ -91,7 +80,7 @@
   <div class="dialog">
     <div class="dialog-head">
       <div class="dialog-title">기본 정책을 변경할까요?</div>
-      <div class="dialog-desc">이 기본값을 따르는 <b>미설정 기관 312개</b>의 이용 기간이 재계산됩니다. 개별 정책이 설정된 기관은 영향받지 않습니다.</div>
+      <div class="dialog-desc">이 기본값을 따르는 <b>기관 312개</b>에 반영됩니다. 개별 정책이 설정된(도메인별 정책에 등록된) 기관은 영향받지 않습니다.</div>
     </div>
     <div class="dialog-foot">
       <button class="btn btn-outline" onclick="closeDialog('warn')">취소</button>
@@ -103,9 +92,9 @@
 <script src="app.js"></script>
 <script>
   function useBadge(u){ return u==='Y'?'<span class="badge">사용</span>':'<span class="badge unused">미사용</span>'; }
-  // [번호, 서비스명, 기본사용여부, 기본이용기간(시작~종료/무기한), 기본일일한도]
+  // [번호, 서비스명, 기본사용여부, 기본이용기간(무기한 고정), 기본일일한도]
   const svcs=[
-    ['1','참고문헌 유효성 검증','Y','가입일 기준 14일','3'],
+    ['1','참고문헌 유효성 검증','Y','무기한','3'],
   ];
   document.getElementById('rows').innerHTML = svcs.map(s=>`
     <tr>
@@ -114,14 +103,13 @@
       <td>${useBadge(s[2])}</td>
       <td class="left ${s[3]==='—'?'muted':''}">${s[3]}</td>
       <td class="num ${s[4]==='—'?'muted':''}">${s[4]}</td>
-      <td><button class="btn btn-outline sm" onclick="openEdit('${s[1]}')">편집</button></td>
+      <td><button class="btn btn-outline sm" onclick="openEdit('${s[1]}')">수정</button></td>
     </tr>`).join('');
 
   function openEdit(name){ document.getElementById('dlgSvc').textContent=name; openDialog('dlg'); }
   function onUse(){ const on=document.getElementById('useSwitch').checked;
     document.getElementById('useLabel').textContent=on?'사용함':'사용 안 함';
     document.getElementById('subFields').classList.toggle('disabled-block',!on); }
-  function setMode(m){ document.getElementById('relDays').disabled=m!=='rel'; document.getElementById('absEnd').disabled=m!=='abs'; }
 </script>
 </body>
 </html>
