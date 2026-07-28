@@ -133,6 +133,8 @@ table.tbl{ width:100%; border-collapse:collapse; font-size:13.5px; }
   padding:12px 14px; border-bottom:1px solid var(--border); white-space:nowrap; background:#fff; }
 .tbl tbody td{ padding:13px 14px; border-bottom:1px solid var(--border); text-align:center; color:var(--foreground); white-space:nowrap; }
 .tbl tbody tr:hover{ background:oklch(0.985 0 0); }
+.tbl tbody tr.row-set{ cursor:not-allowed; opacity:.6; }
+.tbl tbody tr.row-set:hover{ background:#fff; }
 .tbl td.left,.tbl th.left{ text-align:left; }
 .tbl td.num{ text-align:right; font-variant-numeric:tabular-nums; }
 .tbl td.muted{ color:var(--muted-foreground); }

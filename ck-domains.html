@@ -40,9 +40,8 @@
               <select class="select sm"><option>10</option><option>20</option><option>50</option></select></div>
           </div>
           <div class="filter-row">
-            <div class="field"><label>검색</label>
-              <select class="select sm"><option>고객사명</option><option>도메인</option></select>
-              <input class="input" placeholder="검색어 입력" /></div>
+            <div class="field"><label>도메인 검색</label>
+              <input class="input" placeholder="도메인 검색어 입력" /></div>
             <button class="btn btn-primary" onclick="toast('조회 (목업)')">조회</button>
           </div>
         </div>
@@ -87,16 +86,17 @@
       <!-- 1) 도메인 검색·선택 (검색으로만 추가, 드롭다운 없음) -->
       <div class="form-row"><div class="lbl">도메인 검색</div><div class="ctl" style="flex-direction:column;align-items:stretch;gap:10px">
         <div style="display:flex;gap:8px">
-          <select class="select sm" style="flex:0 0 120px"><option>고객사명</option><option>도메인</option></select>
-          <input class="input" placeholder="검색어 입력" style="flex:1" />
+          <input class="input" placeholder="도메인 검색어 입력" style="flex:1" />
           <button class="btn btn-primary" onclick="toast('검색 (목업)')">검색</button>
         </div>
         <div class="table-wrap" style="max-height:200px; overflow:auto; border:1px solid var(--border); border-radius:8px">
           <table class="tbl">
-            <thead><tr><th style="width:56px">선택</th><th class="left">고객사명</th><th class="left">도메인</th></tr></thead>
+            <thead><tr><th style="width:88px">선택</th><th class="left">고객사명</th><th class="left">도메인</th></tr></thead>
             <tbody>
               <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">경북대학교</td><td class="left muted">knu.copykiller.com</td></tr>
               <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">전남대학교</td><td class="left muted">jnu.copykiller.com</td></tr>
+              <!-- 이미 개별 정책이 설정된 도메인: 노출하되 선택 불가(이미 설정됨) -->
+              <tr class="row-set" title="이미 도메인별 정책에 등록됨"><td><span class="badge unused" style="font-size:11px">이미 설정됨</span></td><td class="left muted">서울대학교</td><td class="left muted">snu.copykiller.com</td></tr>
               <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">부산대학교</td><td class="left muted">pusan.copykiller.com</td></tr>
               <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">충남대학교</td><td class="left muted">cnu.copykiller.com</td></tr>
             </tbody>
