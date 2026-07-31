@@ -19,18 +19,21 @@
     <div class="content">
       <div class="card"><div class="card-body">
         <h1 class="page-title">도메인별 정책 설정</h1>
-        <p class="page-sub">설정된 도메인 8건 · 기본 적용 정책과 <b>다르게</b> 설정할 도메인만 등록해 관리합니다.</p>
+        <p class="page-sub">기본 적용 정책과 <b>다르게</b> 설정할 도메인만 등록해 관리합니다. 서비스를 선택하면 해당 서비스에 등록된 도메인이 표시됩니다.</p>
 
-        <!-- 서비스 선택 + 도메인 추가 -->
+        <!-- 서비스 선택(디폴트 없음) + 도메인 추가 -->
         <div class="feature-select">
           <label>서비스</label>
-          <select class="select" style="min-width:220px"><option>참고문헌 유효성 검증</option></select>
+          <select class="select" id="svcSelect" style="min-width:220px" onchange="onServiceChange()">
+            <option value="">서비스를 선택하세요</option>
+            <option value="ref">참고문헌 유효성 검증</option>
+          </select>
           <span style="flex:1"></span>
-          <button class="btn btn-primary" onclick="openDialog('addDlg')">+ 도메인 추가</button>
+          <button class="btn btn-primary" id="addBtn" disabled onclick="location.href='ck-domain-add.html'">+ 도메인 추가</button>
         </div>
 
-        <!-- 필터바 -->
-        <div class="filterbar">
+        <!-- 필터바 (서비스 선택 시 노출) -->
+        <div class="filterbar" id="filterbar" style="display:none">
           <div class="filter-row">
             <div class="field"><label>상태</label>
               <select class="select"><option>전체</option><option>사용중</option><option>만료</option><option>미사용</option></select></div>
@@ -45,6 +48,8 @@
             <button class="btn btn-primary" onclick="toast('조회 (목업)')">조회</button>
           </div>
         </div>
+
+        <p id="countLine" style="font-size:13px;color:var(--muted-foreground);margin:0 0 10px"></p>
 
         <!-- 등록된(개별 설정) 도메인만 표시 -->
         <div class="table-wrap">
@@ -64,110 +69,13 @@
           </table>
         </div>
 
-        <div class="pagination">
+        <div class="pagination" id="pagination" style="display:none">
           <button disabled>«</button><button disabled>‹</button>
           <button class="active">1</button>
           <button>›</button><button>»</button>
         </div>
         <p class="mt-note">※ 도메인/고객사는 <b>외부에서 등록</b>되어 기본 적용 정책(무기한)을 따릅니다. 특정 도메인만 다르게 설정하려면 <b>[+ 도메인 추가]</b>로 불러와 목록에 올린 뒤 정책을 지정합니다. 등록된 도메인만 이 목록에 표시됩니다.</p>
       </div></div>
-    </div>
-  </div>
-</div>
-
-<!-- 도메인 추가 : 검색·선택 + 정책 설정을 한 모달에서 -->
-<div class="overlay" id="addDlg">
-  <div class="dialog policy">
-    <div class="dialog-head">
-      <div class="dialog-title">도메인 추가 · 정책 설정</div>
-      <div class="dialog-desc">기 등록된 도메인을 검색·선택하고, 개별 정책까지 한 번에 설정합니다.</div>
-    </div>
-    <div class="dialog-body">
-      <!-- 1) 도메인 검색·선택 (검색으로만 추가, 드롭다운 없음) -->
-      <div class="form-row"><div class="lbl">도메인 검색</div><div class="ctl" style="flex-direction:column;align-items:stretch;gap:10px">
-        <div style="display:flex;gap:8px">
-          <input class="input" placeholder="도메인 검색어 입력" style="flex:1" />
-          <button class="btn btn-primary" onclick="toast('검색 (목업)')">검색</button>
-        </div>
-        <div class="table-wrap" style="max-height:200px; overflow:auto; border:1px solid var(--border); border-radius:8px">
-          <table class="tbl">
-            <thead><tr><th style="width:88px">선택</th><th class="left">고객사명</th><th class="left">도메인</th></tr></thead>
-            <tbody>
-              <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">경북대학교</td><td class="left muted">knu.copykiller.com</td></tr>
-              <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">전남대학교</td><td class="left muted">jnu.copykiller.com</td></tr>
-              <!-- 이미 개별 정책이 설정된 도메인: 노출하되 선택 불가(이미 설정됨) -->
-              <tr class="row-set" title="이미 도메인별 정책에 등록됨"><td><span class="badge unused" style="font-size:11px">이미 설정됨</span></td><td class="left muted">서울대학교</td><td class="left muted">snu.copykiller.com</td></tr>
-              <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">부산대학교</td><td class="left muted">pusan.copykiller.com</td></tr>
-              <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">충남대학교</td><td class="left muted">cnu.copykiller.com</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div></div>
-
-      <!-- 2) 정책 설정 (도메인 선택 시 활성) -->
-      <div id="addPolicy" class="disabled-block">
-        <div class="form-row"><div class="lbl">사용여부</div><div class="ctl">
-          <label class="switch"><input type="checkbox" id="aUse" checked onchange="aOnUse()"><span class="track"></span></label><span id="aUseLabel">사용함</span></div></div>
-        <div id="aSub">
-          <div class="form-row"><div class="lbl">이용구분</div><div class="ctl">
-            <label style="display:inline-flex;align-items:center;gap:6px"><input type="radio" name="aplan" checked> 트라이얼</label>
-            <label style="display:inline-flex;align-items:center;gap:6px;margin-left:14px"><input type="radio" name="aplan"> 구독</label>
-            <div class="field-help">트라이얼(체험)/구독 중 택1 · 무료→유료 연착륙을 위한 구분값</div></div></div>
-          <div class="form-row"><div class="lbl">이용기간</div><div class="ctl">
-            <input class="input sm" type="date" value="2026-07-14" style="width:150px"><span class="muted">~</span>
-            <input class="input sm" type="date" value="2026-07-28" id="aEnd" style="width:150px">
-            <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="chk" onchange="document.getElementById('aEnd').disabled=this.checked"> 무기한</label>
-            <div class="field-help">이용 가능 기간(시작~종료일) · 무기한=종료일 없이 상시 · 종료일 당일 자정(KST)까지</div></div></div>
-          <div class="form-row"><div class="lbl">일일 한도</div><div class="ctl">
-            <input class="input sm" type="number" value="3" id="aLimit" style="width:90px"> 회 / 일
-            <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('aLimit').disabled=this.checked"> 무제한</label>
-            <div class="field-help">이용자 1인이 하루에 실행할 수 있는 최대 횟수 · 무제한 가능 · 매일 00:00(KST) 초기화</div></div></div>
-        </div>
-        <div class="hint">[추가]하면 이 도메인이 목록에 등록되고 위 정책이 적용됩니다.</div>
-      </div>
-    </div>
-    <div class="dialog-foot">
-      <button class="btn btn-outline" onclick="closeDialog('addDlg')">취소</button>
-      <button class="btn btn-primary" id="addBtn" disabled onclick="closeDialog('addDlg'); toast('도메인이 추가되고 정책이 저장되었습니다.')">추가</button>
-    </div>
-  </div>
-</div>
-
-<!-- 정책 수정 다이얼로그 -->
-<div class="overlay" id="dlg">
-  <div class="dialog policy">
-    <div class="dialog-head">
-      <div class="dialog-title">정책 수정 — <span id="dlgOrg">서울대학교</span></div>
-      <div class="dialog-desc">참고문헌 유효성 검증 · <span id="dlgDomain">snu.copykiller.com</span></div>
-    </div>
-    <div class="dialog-body">
-      <div class="form-row">
-        <div class="lbl">사용여부</div>
-        <div class="ctl">
-          <label class="switch"><input type="checkbox" id="useSwitch" checked onchange="onUse()"><span class="track"></span></label>
-          <span id="useLabel">사용함</span>
-        </div>
-      </div>
-      <div id="subFields">
-        <div class="form-row"><div class="lbl">이용구분</div><div class="ctl">
-          <label style="display:inline-flex;align-items:center;gap:6px"><input type="radio" name="plan" checked> 트라이얼</label>
-          <label style="display:inline-flex;align-items:center;gap:6px;margin-left:14px"><input type="radio" name="plan"> 구독</label>
-          <div class="field-help">트라이얼(체험)/구독 중 택1 · 무료→유료 연착륙을 위한 구분값(통계에서 트라이얼·구독을 구분해 봄)</div></div></div>
-        <div class="form-row"><div class="lbl">이용기간</div><div class="ctl">
-          <input class="input sm" type="date" value="2026-07-04" style="width:150px"><span class="muted">~</span>
-          <input class="input sm" type="date" value="2026-07-18" id="endDate" style="width:150px">
-          <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="chk" onchange="document.getElementById('endDate').disabled=this.checked"> 무기한</label>
-          <div class="field-help">이 도메인이 기능을 이용할 수 있는 기간(시작~종료일) · 무기한=종료일 없이 상시 · 종료일 당일 자정(KST)까지 이용</div></div></div>
-        <div class="form-row"><div class="lbl">일일 한도</div><div class="ctl">
-          <input class="input sm" type="number" value="3" id="limitInput" style="width:90px"> 회 / 일
-          <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('limitInput').disabled=this.checked"> 무제한</label>
-          <div class="field-help">이 도메인 소속 이용자 1인이 하루에 실행할 수 있는 최대 횟수 · 무제한 가능 · 매일 00:00(KST) 초기화</div></div></div>
-      </div>
-      <div class="hint">사용 안 함으로 전환하면 아래 설정은 보존되며 표시만 비활성됩니다.</div>
-    </div>
-    <div class="dialog-foot">
-      <button class="btn btn-outline" onclick="closeDialog('dlg')">취소</button>
-      <button class="btn btn-primary" onclick="closeDialog('dlg'); toast('저장되었습니다.')">저장</button>
     </div>
   </div>
 </div>
@@ -204,32 +112,41 @@
     ['채널','channel.copykiller.com','구독','무기한','무제한','active'],
     ['스쿨','school.copykiller.com','트라이얼','2026-06-01 ~ 2026-08-31','3','active'],
   ];
-  document.getElementById('rows').innerHTML = data.map(r=>`
-    <tr>
-      <td class="left"><a class="link" href="javascript:void(0)" onclick="openEdit('${r[0]}','${r[1]}')">${r[0]}</a></td>
-      <td class="left muted">${r[1]}</td>
-      <td>${r[2]}</td>
-      <td class="left">${r[3]}</td>
-      <td class="num">${r[4]}</td>
-      <td>${statusBadge(r[5])}</td>
-      <td style="white-space:nowrap">
-        <button class="btn btn-outline sm" onclick="openEdit('${r[0]}','${r[1]}')">수정</button>
-        <button class="btn btn-ghost sm" onclick="openRemove('${r[0]}')">제거</button>
-      </td>
-    </tr>`).join('');
-
-  function openEdit(org,dom){ document.getElementById('dlgOrg').textContent=org; document.getElementById('dlgDomain').textContent=dom; openDialog('dlg'); }
+  function goEdit(org,dom){ location.href='ck-domain-edit.html?org='+encodeURIComponent(org)+'&dom='+encodeURIComponent(dom); }
+  function renderRows(){
+    document.getElementById('rows').innerHTML = data.map(r=>`
+      <tr>
+        <td class="left"><a class="link" href="javascript:void(0)" onclick="goEdit('${r[0]}','${r[1]}')">${r[0]}</a></td>
+        <td class="left muted">${r[1]}</td>
+        <td>${r[2]}</td>
+        <td class="left">${r[3]}</td>
+        <td class="num">${r[4]}</td>
+        <td>${statusBadge(r[5])}</td>
+        <td style="white-space:nowrap">
+          <button class="btn btn-outline sm" onclick="goEdit('${r[0]}','${r[1]}')">수정</button>
+          <button class="btn btn-ghost sm" onclick="openRemove('${r[0]}')">제거</button>
+        </td>
+      </tr>`).join('');
+  }
+  function emptyState(msg){
+    document.getElementById('rows').innerHTML = `<tr><td colspan="7" class="muted" style="padding:40px 14px;text-align:center">${msg}</td></tr>`;
+  }
+  function onServiceChange(){
+    const has = document.getElementById('svcSelect').value !== '';
+    document.getElementById('addBtn').disabled = !has;
+    document.getElementById('filterbar').style.display = has ? '' : 'none';
+    document.getElementById('pagination').style.display = has ? '' : 'none';
+    if(has){
+      renderRows();
+      document.getElementById('countLine').textContent = '설정된 도메인 ' + data.length + '건';
+    } else {
+      emptyState('서비스를 선택하면 해당 서비스에 등록된 도메인이 표시됩니다.');
+      document.getElementById('countLine').textContent = '';
+    }
+  }
   function openRemove(org){ document.getElementById('rmOrg').textContent=org; openDialog('removeDlg'); }
-  function onUse(){ const on=document.getElementById('useSwitch').checked;
-    document.getElementById('useLabel').textContent=on?'사용함':'사용 안 함';
-    document.getElementById('subFields').classList.toggle('disabled-block',!on); }
-  // 도메인 추가 모달: 검색 결과에서 도메인 선택 시 정책 섹션·추가 버튼 활성화
-  function onPick(){ const picked=!!document.querySelector('input[name="domSel"]:checked');
-    document.getElementById('addPolicy').classList.toggle('disabled-block', !picked);
-    document.getElementById('addBtn').disabled = !picked; }
-  function aOnUse(){ const on=document.getElementById('aUse').checked;
-    document.getElementById('aUseLabel').textContent=on?'사용함':'사용 안 함';
-    document.getElementById('aSub').classList.toggle('disabled-block',!on); }
+  // 첫 진입: 서비스 미선택 → 빈 상태
+  onServiceChange();
 </script>
 </body>
 </html>

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>정책 수정 · CK 관리기</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-active="ck-domain">
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-row">
+        <button class="panel-toggle" data-panel-toggle title="사이드바 접기"></button>
+        <nav class="breadcrumb"><span>CK 관리기</span><span class="sep">›</span><span>기능별 이용 제한 정책 관리</span><span class="sep">›</span><a href="ck-domains.html">도메인별 정책 설정</a><span class="sep">›</span><span class="cur">정책 수정</span></nav>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card"><div class="card-body">
+        <h1 class="page-title">정책 수정 — <span id="hOrg">서울대학교</span></h1>
+        <p class="page-sub">참고문헌 유효성 검증 · <span id="hDom">snu.copykiller.com</span></p>
+
+        <div style="max-width:760px">
+          <div class="form-row">
+            <div class="lbl">사용여부</div>
+            <div class="ctl">
+              <label class="switch"><input type="checkbox" id="useSwitch" checked onchange="onUse()"><span class="track"></span></label>
+              <span id="useLabel">사용함</span>
+            </div>
+          </div>
+          <div id="subFields">
+            <div class="form-row"><div class="lbl">이용구분</div><div class="ctl">
+              <label style="display:inline-flex;align-items:center;gap:6px"><input type="radio" name="plan" checked> 트라이얼</label>
+              <label style="display:inline-flex;align-items:center;gap:6px;margin-left:14px"><input type="radio" name="plan"> 구독</label>
+              <div class="field-help">트라이얼(체험)/구독 중 택1 · 무료→유료 연착륙을 위한 구분값(통계에서 트라이얼·구독을 구분해 봄)</div></div></div>
+            <div class="form-row"><div class="lbl">이용기간</div><div class="ctl">
+              <input class="input sm" type="date" value="2026-07-04" style="width:150px"><span class="muted">~</span>
+              <input class="input sm" type="date" value="2026-07-18" id="endDate" style="width:150px">
+              <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="chk" onchange="document.getElementById('endDate').disabled=this.checked"> 무기한</label>
+              <div class="field-help">이 도메인이 기능을 이용할 수 있는 기간(시작~종료일) · 무기한=종료일 없이 상시 · 종료일 당일 자정(KST)까지 이용</div></div></div>
+            <div class="form-row"><div class="lbl">일일 한도</div><div class="ctl">
+              <input class="input sm" type="number" value="3" id="limitInput" style="width:90px"> 회 / 일
+              <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('limitInput').disabled=this.checked"> 무제한</label>
+              <div class="field-help">이 도메인 소속 이용자 1인이 하루에 실행할 수 있는 최대 횟수 · 무제한 가능 · 매일 00:00(KST) 초기화</div></div></div>
+          </div>
+          <div class="hint">사용 안 함으로 전환하면 아래 설정은 보존되며 표시만 비활성됩니다. · 개별 설정을 해제하려면 목록에서 <b>[제거]</b>하세요.</div>
+
+          <div class="form-actions">
+            <button class="btn btn-outline" onclick="location.href='ck-domains.html'">취소</button>
+            <button class="btn btn-primary" onclick="save()">저장</button>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  // 목록에서 넘어온 대상(고객사명·도메인) 반영
+  var p = new URLSearchParams(location.search);
+  if(p.get('org')) document.getElementById('hOrg').textContent = p.get('org');
+  if(p.get('dom')) document.getElementById('hDom').textContent = p.get('dom');
+  function onUse(){ const on=document.getElementById('useSwitch').checked;
+    document.getElementById('useLabel').textContent=on?'사용함':'사용 안 함';
+    document.getElementById('subFields').classList.toggle('disabled-block',!on); }
+  function save(){ toast('저장되었습니다.'); setTimeout(function(){ location.href='ck-domains.html'; }, 700); }
+</script>
+</body>
+</html>

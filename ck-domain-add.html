@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>도메인 추가 · 정책 설정 · CK 관리기</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body data-active="ck-domain">
+<div class="layout">
+  <aside class="sidebar" id="sidebar"></aside>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-row">
+        <button class="panel-toggle" data-panel-toggle title="사이드바 접기"></button>
+        <nav class="breadcrumb"><span>CK 관리기</span><span class="sep">›</span><span>기능별 이용 제한 정책 관리</span><span class="sep">›</span><a href="ck-domains.html">도메인별 정책 설정</a><span class="sep">›</span><span class="cur">도메인 추가</span></nav>
+      </div>
+    </div>
+    <div class="content">
+      <div class="card"><div class="card-body">
+        <h1 class="page-title">도메인 추가 · 정책 설정</h1>
+        <p class="page-sub">기 등록된 도메인을 검색·선택하고, 개별 정책까지 설정합니다. · 서비스: <b>참고문헌 유효성 검증</b></p>
+
+        <div style="max-width:760px">
+          <!-- 1) 도메인 검색·선택 (검색으로만 추가, 드롭다운 없음) -->
+          <div class="form-row"><div class="lbl">도메인 검색</div><div class="ctl" style="flex-direction:column;align-items:stretch;gap:10px">
+            <div style="display:flex;gap:8px">
+              <input class="input" placeholder="도메인 검색어 입력" style="flex:1" />
+              <button class="btn btn-primary" onclick="toast('검색 (목업)')">검색</button>
+            </div>
+            <div class="table-wrap" style="max-height:240px; overflow:auto; border:1px solid var(--border); border-radius:8px">
+              <table class="tbl">
+                <thead><tr><th style="width:88px">선택</th><th class="left">고객사명</th><th class="left">도메인</th></tr></thead>
+                <tbody>
+                  <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">경북대학교</td><td class="left muted">knu.copykiller.com</td></tr>
+                  <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">전남대학교</td><td class="left muted">jnu.copykiller.com</td></tr>
+                  <!-- 이미 개별 정책이 설정된 도메인: 노출하되 선택 불가(이미 설정됨) -->
+                  <tr class="row-set" title="이미 도메인별 정책에 등록됨"><td><span class="badge unused" style="font-size:11px">이미 설정됨</span></td><td class="left muted">서울대학교</td><td class="left muted">snu.copykiller.com</td></tr>
+                  <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">부산대학교</td><td class="left muted">pusan.copykiller.com</td></tr>
+                  <tr onclick="this.querySelector('input').checked=true; onPick()"><td><input type="radio" name="domSel" onclick="onPick()"></td><td class="left">충남대학교</td><td class="left muted">cnu.copykiller.com</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div></div>
+
+          <!-- 2) 정책 설정 (도메인 선택 시 활성) -->
+          <div id="addPolicy" class="disabled-block">
+            <div class="form-row"><div class="lbl">사용여부</div><div class="ctl">
+              <label class="switch"><input type="checkbox" id="aUse" checked onchange="aOnUse()"><span class="track"></span></label><span id="aUseLabel">사용함</span></div></div>
+            <div id="aSub">
+              <div class="form-row"><div class="lbl">이용구분</div><div class="ctl">
+                <label style="display:inline-flex;align-items:center;gap:6px"><input type="radio" name="aplan" checked> 트라이얼</label>
+                <label style="display:inline-flex;align-items:center;gap:6px;margin-left:14px"><input type="radio" name="aplan"> 구독</label>
+                <div class="field-help">트라이얼(체험)/구독 중 택1 · 무료→유료 연착륙을 위한 구분값</div></div></div>
+              <div class="form-row"><div class="lbl">이용기간</div><div class="ctl">
+                <input class="input sm" type="date" value="2026-07-14" style="width:150px"><span class="muted">~</span>
+                <input class="input sm" type="date" value="2026-07-28" id="aEnd" style="width:150px">
+                <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="chk" onchange="document.getElementById('aEnd').disabled=this.checked"> 무기한</label>
+                <div class="field-help">이용 가능 기간(시작~종료일) · 무기한=종료일 없이 상시 · 종료일 당일 자정(KST)까지</div></div></div>
+              <div class="form-row"><div class="lbl">일일 한도</div><div class="ctl">
+                <input class="input sm" type="number" value="3" id="aLimit" style="width:90px"> 회 / 일
+                <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('aLimit').disabled=this.checked"> 무제한</label>
+                <div class="field-help">이용자 1인이 하루에 실행할 수 있는 최대 횟수 · 무제한 가능 · 매일 00:00(KST) 초기화</div></div></div>
+            </div>
+            <div class="hint">[추가]하면 이 도메인이 목록에 등록되고 위 정책이 적용됩니다.</div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-outline" onclick="location.href='ck-domains.html'">취소</button>
+            <button class="btn btn-primary" id="addBtn" disabled onclick="save()">추가</button>
+          </div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  // 검색 결과에서 도메인 선택 시 정책 섹션·추가 버튼 활성화
+  function onPick(){ const picked=!!document.querySelector('input[name="domSel"]:checked');
+    document.getElementById('addPolicy').classList.toggle('disabled-block', !picked);
+    document.getElementById('addBtn').disabled = !picked; }
+  function aOnUse(){ const on=document.getElementById('aUse').checked;
+    document.getElementById('aUseLabel').textContent=on?'사용함':'사용 안 함';
+    document.getElementById('aSub').classList.toggle('disabled-block',!on); }
+  function save(){ toast('도메인이 추가되고 정책이 저장되었습니다.'); setTimeout(function(){ location.href='ck-domains.html'; }, 700); }
+</script>
+</body>
+</html>
