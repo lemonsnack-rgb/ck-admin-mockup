@@ -42,49 +42,6 @@
   </div>
 </div>
 
-<!-- 기본 정책 수정 다이얼로그 -->
-<div class="overlay" id="dlg">
-  <div class="dialog" style="max-width:600px">
-    <div class="dialog-head">
-      <div class="dialog-title">기본 적용 정책 — <span id="dlgSvc">참고문헌 유효성 검증</span></div>
-      <div class="dialog-desc">도메인 공통 기본 정책</div>
-    </div>
-    <div class="dialog-body">
-      <div class="form-row">
-        <div class="lbl">기본 사용여부</div>
-        <div class="ctl">
-          <label class="switch"><input type="checkbox" id="useSwitch" checked onchange="onUse()"><span class="track"></span></label>
-          <span id="useLabel">사용함</span>
-        </div>
-      </div>
-      <div id="subFields">
-        <div class="form-row"><div class="lbl">기본 일일한도</div><div class="ctl">
-          <input class="input sm" type="number" value="3" id="limitInput" style="width:90px"> 회 / 일
-          <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('limitInput').disabled=this.checked"> 무제한</label></div></div>
-      </div>
-      <div class="hint">개별(도메인별) 정책이 없는 모든 도메인에 이 기본값이 적용됩니다. 기본 이용기간은 무기한(기간 제한 없음)이며, 기간 제한이 필요한 도메인은 <b>도메인별 정책 설정</b>에서 개별 지정합니다.</div>
-    </div>
-    <div class="dialog-foot">
-      <button class="btn btn-outline" onclick="closeDialog('dlg')">취소</button>
-      <button class="btn btn-primary" onclick="openDialog('warn')">저장</button>
-    </div>
-  </div>
-</div>
-
-<!-- 기본 정책 변경 경고 -->
-<div class="overlay" id="warn">
-  <div class="dialog">
-    <div class="dialog-head">
-      <div class="dialog-title">기본 정책을 변경할까요?</div>
-      <div class="dialog-desc">이 기본값을 따르는 기관의 정책이 일괄 변경됩니다. 개별 정책이 설정된(도메인별 정책에 등록된) 기관은 영향받지 않습니다.</div>
-    </div>
-    <div class="dialog-foot">
-      <button class="btn btn-outline" onclick="closeDialog('warn')">취소</button>
-      <button class="btn btn-primary" onclick="closeDialog('warn'); closeDialog('dlg'); toast('저장되었습니다.')">변경</button>
-    </div>
-  </div>
-</div>
-
 <script src="app.js"></script>
 <script>
   function useBadge(u){ return u==='Y'?'<span class="badge">사용</span>':'<span class="badge unused">미사용</span>'; }
@@ -101,10 +58,8 @@
       <td><button class="btn btn-outline sm" onclick="openEdit('${s[1]}')">수정</button></td>
     </tr>`).join('');
 
-  function openEdit(name){ document.getElementById('dlgSvc').textContent=name; openDialog('dlg'); }
-  function onUse(){ const on=document.getElementById('useSwitch').checked;
-    document.getElementById('useLabel').textContent=on?'사용함':'사용 안 함';
-    document.getElementById('subFields').classList.toggle('disabled-block',!on); }
+  // 수정 = 별도 페이지로 이동(모달 아님, 다른 메뉴와 통일)
+  function openEdit(name){ location.href='ck-feature-edit.html?svc='+encodeURIComponent(name); }
 </script>
 </body>
 </html>
