@@ -58,9 +58,9 @@
                 <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="chk" onchange="document.getElementById('aEnd').disabled=this.checked"> 무기한</label>
                 <div class="field-help">이용 가능 기간(시작~종료일) · 무기한=종료일 없이 상시 · 종료일 당일 자정(KST)까지</div></div></div>
               <div class="form-row"><div class="lbl">일일 한도</div><div class="ctl">
-                <input class="input sm" type="number" value="3" id="aLimit" style="width:90px"> 회 / 일
+                <input class="input sm" type="number" value="3" id="aLimit" min="1" max="500" style="width:90px"> 회 / 일
                 <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('aLimit').disabled=this.checked"> 무제한</label>
-                <div class="field-help">이용자 1인이 하루에 실행할 수 있는 최대 횟수 · 무제한 가능 · 매일 00:00(KST) 초기화</div></div></div>
+                <div class="field-help">이용자 1인이 하루에 실행할 수 있는 최대 횟수(최대 500회) · 무제한 가능 · 매일 00:00(KST) 초기화</div></div></div>
             </div>
             <div class="hint">[추가]하면 이 도메인이 목록에 등록되고 위 정책이 적용됩니다.</div>
           </div>

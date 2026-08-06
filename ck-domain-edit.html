@@ -40,9 +40,9 @@
               <label style="display:inline-flex;align-items:center;gap:6px;margin-left:6px"><input type="checkbox" class="chk" onchange="document.getElementById('endDate').disabled=this.checked"> 무기한</label>
               <div class="field-help">이 도메인이 기능을 이용할 수 있는 기간(시작~종료일) · 무기한=종료일 없이 상시 · 종료일 당일 자정(KST)까지 이용</div></div></div>
             <div class="form-row"><div class="lbl">일일 한도</div><div class="ctl">
-              <input class="input sm" type="number" value="3" id="limitInput" style="width:90px"> 회 / 일
+              <input class="input sm" type="number" value="3" id="limitInput" min="1" max="500" style="width:90px"> 회 / 일
               <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('limitInput').disabled=this.checked"> 무제한</label>
-              <div class="field-help">이 도메인 소속 이용자 1인이 하루에 실행할 수 있는 최대 횟수 · 무제한 가능 · 매일 00:00(KST) 초기화</div></div></div>
+              <div class="field-help">이 도메인 소속 이용자 1인이 하루에 실행할 수 있는 최대 횟수(최대 500회) · 무제한 가능 · 매일 00:00(KST) 초기화</div></div></div>
           </div>
           <div class="hint">사용 안 함으로 전환하면 아래 설정은 보존되며 표시만 비활성됩니다. · 개별 설정을 해제하려면 목록에서 <b>[제거]</b>하세요.</div>
 

@@ -31,8 +31,9 @@
           </div>
           <div id="subFields">
             <div class="form-row"><div class="lbl">기본 일일한도</div><div class="ctl">
-              <input class="input sm" type="number" value="3" id="limitInput" style="width:90px"> 회 / 일
-              <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('limitInput').disabled=this.checked"> 무제한</label></div></div>
+              <input class="input sm" type="number" value="3" id="limitInput" min="1" max="500" style="width:90px"> 회 / 일
+              <label style="display:inline-flex;align-items:center;gap:6px;margin-left:8px"><input type="checkbox" class="chk" onchange="document.getElementById('limitInput').disabled=this.checked"> 무제한</label>
+              <span class="field-help">1인 하루 최대 이용 횟수(최대 500회) · 무제한 가능</span></div></div>
           </div>
           <div class="hint">개별(도메인별) 정책이 없는 모든 도메인에 이 기본값이 적용됩니다. 기본 이용기간은 무기한(기간 제한 없음)이며, 기간 제한이 필요한 도메인은 <b>도메인별 정책 설정</b>에서 개별 지정합니다.</div>
 
