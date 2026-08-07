@@ -12,50 +12,58 @@
     일일한도)이 이용자 서비스(www.copykiller.com)에서 어떻게 출력되는지 보여주는
     연동 규격 예시화면이다. (기능단위명세 부록 B — "잔여/소진 안내 = 관리기 화면
     없음, 문구만 정의")
-  · 문구는 docs/[CK] … 기능단위명세 … md 「이용자 안내 정책 (문구)」의 확정 카피를
-    그대로 사용한다. 임의 수정 금지.
-  · 레이아웃·토큰은 실제 서비스 실측값:
-      - 팝오버   : w 320px / radius 12px / padding 20px / shadow 0 0 8px rgba(0,0,0,.15)
-      - AlertDialog: min-w 630px / padding 32px / radius 8px / shadow 0 0 6px rgba(0,0,0,.45)
-      - primary-500 #00c2ff · primary-600 #0097d4 · primary-50 #effaff · slate #3e4448
-      - black-500 #939395 · black-600 #7d7d80 · 폰트 Pretendard
-  · 노출 시점 — 안내는 모두 [검사 시작]을 **클릭한 시점**의 **모달 팝업**으로 출력한다.
+
+  · 노출 시점 — 안내는 모두 [검사 시작]을 **클릭한 시점**의 **모달 팝업**으로 출력.
       [검사하기] → 「문서유형 설정」 팝오버(문서 유형만) → [검사 시작] 클릭
-                 → 모달 팝업(잔여 안내 확인 / 소진 시 차단) → 확인 시 검사 진행·선차감
-    「문서유형 설정」 팝오버에는 이용 건수 안내를 넣지 않는다(현재 운영 화면 그대로).
+                 → 모달 팝업(차감 확인 / 소진 시 차단) → 확인 시 검사 진행·선차감
+    「문서유형 설정」 팝오버에는 이용 건수 안내를 넣지 않는다(운영 화면 그대로).
     무제한 도메인은 모달 자체를 띄우지 않고 곧바로 검사가 진행된다.
+
+  · 실측 토큰 (www.copykiller.com 라이브 CSS 추출)
+      페이지 배경  gray-100 #e6e8ea · 앱 폭 max 1512px, mx-auto
+      앱 그림자    -4px 0 8px -2px rgba(0,0,0,.2), 4px 0 8px -2px rgba(0,0,0,.2)
+      LNB          width 275px · padding 32px 28px · 내부 폭 219px
+                   배경 linear-gradient(270deg,#f1f1f1,#f8f8f8 4.8%,#fff 11.35%,#fff 100%)
+      LNB 텍스트   기본 gray-600 #58616a · active brand-ck #00c2ff + bg-gray-50 #f4f5f6
+      typo         lnb-main 16/700/22.4 · lnb-sub 14/600/23.8 · heading-large 32/700
+                   heading-medium 24/700/36 · body-medium 16/400/24 · body-small 14/400/21
+      본문         white · padding 32px · gap 32px
+      팝오버       w 320px · r 12px · p 20px · shadow 0 0 8px rgba(0,0,0,.15)
+      AlertDialog  min-w 630px · p 32px · r 8px · shadow 0 0 6px rgba(0,0,0,.45)
+      primary-500 #00c2ff · 600 #0097d4 · black-500 #939395 · 600 #7d7d80 · slate #3e4448
+      Free 뱃지    #E9FFC9 pill 26x11 · 폰트 Pretendard
   ============================================================================
 -->
 <style>
 @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
 
 :root{
+  --brand-ck:#00c2ff;
   --primary-500:#00c2ff;
   --primary-600:#0097d4;
-  --primary-700:#0077a8;
-  --primary-50:#effaff;
   --slate:#3e4448;
   --black-500:#939395;
   --black-600:#7d7d80;
+  --gray-50:#f4f5f6;
+  --gray-100:#e6e8ea;
   --gray-300:#d1d5db;
   --gray-400:#9ca3af;
-  --gray-50:#f9fafb;
-  --gray-100:#f3f4f6;
-  --red-600:#dc2626;
-  --page:#f4f5f7;
+  --gray-500:#6a7282;
+  --gray-600:#58616a;
+  --line:#eceef1;
 }
 *{box-sizing:border-box;}
 html,body{margin:0;padding:0;}
 body{
   font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,
     "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-  color:var(--slate); background:var(--page); -webkit-font-smoothing:antialiased;
+  color:var(--slate); background:var(--gray-100); -webkit-font-smoothing:antialiased;
 }
 button{font-family:inherit;cursor:pointer;}
 
 /* ===== 목업 컨트롤 바 (예시화면 전용 · 실제 서비스에 없는 영역) ===== */
 .mockbar{
-  position:sticky; top:0; z-index:50;
+  position:sticky; top:0; z-index:60;
   background:#1f2429; color:#fff; padding:14px 20px;
   display:flex; flex-wrap:wrap; align-items:center; gap:12px 20px;
   box-shadow:0 1px 3px rgba(0,0,0,.3);
@@ -70,94 +78,121 @@ button{font-family:inherit;cursor:pointer;}
   transition:all .15s ease-out;
 }
 .tabs button:hover{background:#2b3238;color:#fff;}
-.tabs button[aria-selected="true"]{background:var(--primary-500);border-color:var(--primary-500);color:#062430;}
+.tabs button[aria-selected="true"]{background:var(--brand-ck);border-color:var(--brand-ck);color:#062430;}
 .langtoggle{display:flex;border:1px solid #3d454c;border-radius:8px;overflow:hidden;}
 .langtoggle button{
-  background:transparent;border:0;color:#c6ced5;font-size:12.5px;font-weight:700;
-  padding:7px 14px;
+  background:transparent;border:0;color:#c6ced5;font-size:12.5px;font-weight:700;padding:7px 14px;
 }
 .langtoggle button[aria-selected="true"]{background:#3d454c;color:#fff;}
 
-/* ===== 앱 셸 (실측 복제) ===== */
-.app{display:flex;min-height:760px;background:#fff;}
-.sidebar{
-  width:220px;flex:0 0 220px;background:#fff;border-right:1px solid #eceef1;
-  padding:22px 16px 16px;display:flex;flex-direction:column;
+/* ===== 앱 셸 (실측) ===== */
+.app{
+  display:flex; width:100%; max-width:1512px; margin:0 auto; min-height:900px;
+  background:#fff;
+  box-shadow:-4px 0 8px -2px rgba(0,0,0,.2), 4px 0 8px -2px rgba(0,0,0,.2);
 }
-.sidebar .logo{height:20px;margin:0 6px 26px;display:block;}
-.nav{display:flex;flex-direction:column;gap:2px;}
-.nav .group{
+
+/* ----- LNB (사이드바) ----- */
+.lnb{
+  flex:0 0 275px; width:275px; padding:32px 28px;
+  background:linear-gradient(270deg,#f1f1f1,#f8f8f8 4.8%,#fff 11.35%,#fff 100%);
+}
+.lnb-inner{width:219px;display:flex;flex-direction:column;height:100%;}
+.lnb-header{display:flex;align-items:center;justify-content:space-between;gap:36px;margin-bottom:40px;}
+.lnb-header img{height:30px;display:block;}
+.lnb-trigger{background:none;border:0;padding:10px;line-height:0;}
+.lnb-trigger svg{fill:var(--gray-300);}
+.lnb-trigger:hover svg{fill:var(--gray-600);}
+.lnb-content{flex:1;display:flex;flex-direction:column;justify-content:space-between;gap:8px;color:var(--gray-600);}
+.lnb-menu{display:flex;flex-direction:column;gap:4px;list-style:none;margin:0;padding:0;}
+
+/* 1차 메뉴 : px-3 py-2 rounded-md · typo-lnb-main 16/700 */
+.mi{
   display:flex;align-items:center;justify-content:space-between;
-  font-size:14px;font-weight:700;padding:9px 12px;border-radius:8px;color:var(--slate);
+  padding:8px 12px;border-radius:6px;
+  font-size:16px;font-weight:700;line-height:22.4px;color:var(--gray-600);
+  text-decoration:none;transition:background-color .15s ease-out,color .15s ease-out;
 }
-.nav .group.active{background:var(--gray-100);color:var(--primary-500);}
-.nav .sub{display:flex;flex-direction:column;gap:2px;margin:2px 0 6px;}
-.nav .sub a{
-  display:flex;align-items:center;gap:6px;
-  font-size:13px;padding:8px 12px 8px 22px;border-radius:8px;color:var(--slate);
-  text-decoration:none;
-}
-.nav .sub a.active{background:var(--gray-100);color:var(--primary-500);font-weight:600;}
-.nav .item{
+.mi:hover{background:var(--gray-50);}
+.mi.active{background:var(--gray-50);color:var(--brand-ck);}
+.mi .l{display:flex;align-items:center;gap:8px;min-width:0;white-space:nowrap;}
+.mi .ico{width:20px;height:20px;flex:0 0 20px;display:flex;align-items:center;justify-content:center;}
+.mi .ico svg{width:20px;height:20px;fill:var(--gray-500);}
+.mi.active .ico svg{fill:var(--brand-ck);}
+.mi .chev{width:20px;height:20px;flex:0 0 20px;display:flex;align-items:center;justify-content:center;}
+.mi .chev svg{width:20px;height:20px;fill:var(--black-600);}
+.mi.active .chev svg{fill:var(--brand-ck);}
+
+/* 2차 메뉴 : px-3 py-1 rounded-md · typo-lnb-sub 14/600 */
+.sub{display:flex;flex-direction:column;gap:4px;margin-top:4px;list-style:none;padding:0;}
+.si{
   display:flex;align-items:center;gap:8px;
-  font-size:14px;font-weight:700;padding:10px 12px;border-radius:8px;color:var(--slate);
+  padding:4px 12px;border-radius:6px;
+  font-size:14px;font-weight:600;line-height:23.8px;color:var(--gray-600);
+  text-decoration:none;transition:background-color .15s ease-out,color .15s ease-out;
 }
+.si:hover{background:var(--gray-50);}
+.si.active{background:var(--gray-50);color:var(--brand-ck);}
+.si .ico{width:20px;flex:0 0 20px;}
+.si .txt{display:flex;align-items:center;gap:4px;white-space:nowrap;}
+
+/* 뱃지 */
 .badge-free{
-  font-size:10px;font-weight:700;color:#22c55e;border-radius:4px;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;
+  width:26px;height:11px;border-radius:4px;background:#e9ffc9;color:#4e7d0a;
+  font-size:7.5px;font-weight:700;letter-spacing:.1px;
 }
 .badge-hot{
-  font-size:10px;font-weight:700;color:#fff;background:#ff2d78;
-  border-radius:9px;padding:2px 6px;line-height:1;
+  display:inline-flex;align-items:center;justify-content:center;
+  height:14px;padding:0 6px;border-radius:9px;background:#ff2d78;color:#fff;
+  font-size:9px;font-weight:700;
 }
-.sidebar .bottom{margin-top:auto;padding-top:14px;display:flex;flex-direction:column;gap:2px;}
-.sidebar .divider{height:1px;background:#eceef1;margin:10px 2px;}
+.lnb-divider{height:1px;background:var(--line);margin:10px 0;}
 
-.main{flex:1;display:flex;flex-direction:column;min-width:0;position:relative;}
-/* 하단 여백을 넉넉히 둬 팝오버(footbar 기준 absolute)가 파일 목록을 덮지 않게 한다 */
-.main-body{flex:1;padding:34px 40px 380px;}
-.main h2{font-size:26px;font-weight:800;margin:0 0 8px;letter-spacing:-.4px;}
-.main .lead{font-size:14px;color:var(--black-600);margin:0 0 26px;}
-.dropzone{
-  border:1px dashed var(--gray-300);border-radius:6px;padding:56px 20px;text-align:center;
-}
-.dropzone .big{font-size:20px;font-weight:800;margin:0 0 14px;letter-spacing:-.3px;}
+/* ----- 본문 ----- */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;background:#fff;position:relative;}
+.main-body{flex:1;display:flex;flex-direction:column;gap:32px;padding:32px;padding-bottom:400px;}
+.page-h1{font-size:32px;font-weight:700;color:#000;margin:0;letter-spacing:-.6px;}
+.page-lead{font-size:16px;line-height:24px;color:var(--black-600);margin:-20px 0 0;}
+.dropzone{border:1px dashed var(--gray-300);border-radius:6px;padding:56px 20px;text-align:center;}
+.dropzone .big{font-size:20px;font-weight:700;margin:0 0 14px;letter-spacing:-.3px;color:var(--slate);}
 .dropzone .btns{display:flex;gap:10px;align-items:center;justify-content:center;margin-bottom:20px;}
 .btn-outline-primary{
   display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 14px;
   border:1px solid var(--primary-500);border-radius:8px;background:#fff;
-  color:var(--primary-500);font-size:13px;font-weight:700;
+  color:var(--primary-500);font-size:14px;font-weight:600;
 }
-.dropzone .or{font-size:13px;color:var(--black-600);}
-.dropzone .meta{font-size:13px;color:var(--black-600);line-height:1.9;}
+.btn-outline-primary svg{width:14px;height:14px;fill:currentColor;}
+.dropzone .or{font-size:14px;color:var(--black-600);}
+.dropzone .meta{font-size:14px;color:var(--black-600);line-height:1.9;}
 .filerow{
   display:flex;align-items:center;gap:12px;
-  border-bottom:1px solid #eceef1;padding:16px 4px;margin-top:22px;font-size:14px;
+  border-bottom:1px solid var(--line);padding:16px 4px;font-size:14px;margin-top:-10px;
 }
 .filerow .name{flex:1;}
-.filerow .ok{display:inline-flex;align-items:center;gap:6px;color:var(--primary-500);font-weight:700;font-size:13px;}
+.filerow .ok{display:inline-flex;align-items:center;gap:6px;color:var(--primary-500);font-weight:700;font-size:14px;}
 .filerow .del{
   height:30px;padding:0 12px;border:1px solid #ff5c8a;border-radius:8px;
   background:#fff;color:#ff5c8a;font-size:12px;font-weight:700;
 }
 .footbar{
-  border-top:1px solid #eceef1;padding:18px 40px;display:flex;align-items:center;
+  border-top:1px solid var(--line);padding:20px 32px;display:flex;align-items:center;
   justify-content:space-between;background:#fff;position:relative;
 }
 .btn-ghost{
   display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 16px;
   border:1px solid var(--black-500);border-radius:8px;background:#fff;
-  color:var(--slate);font-size:15px;font-weight:600;
+  color:var(--slate);font-size:16px;font-weight:600;
 }
 .btn-primary{
   display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;
   border:0;border-radius:8px;background:var(--primary-500);color:#fff;
-  font-size:15px;font-weight:600;
+  font-size:16px;font-weight:600;
 }
 .btn-primary:hover{background:var(--primary-600);}
-.btn-primary[disabled]{background:var(--gray-300);cursor:not-allowed;}
 
-/* ===== 문서유형 설정 팝오버 (실측: w320 · r12 · p20 · shadow 0 0 8px .15) ===== */
-.popwrap{position:absolute;right:40px;bottom:76px;}
+/* ===== 문서유형 설정 팝오버 (운영 화면 그대로) ===== */
+.popwrap{position:absolute;right:32px;bottom:80px;}
 .popover{
   width:320px;background:#fff;border-radius:12px;padding:20px;
   box-shadow:0 0 8px 0 rgba(0,0,0,.15);
@@ -171,31 +206,22 @@ button{font-family:inherit;cursor:pointer;}
   height:40px;padding:8px 8px 8px 16px;border:1px solid var(--black-600);
   border-radius:6px;background:#fff;font-size:14px;color:var(--slate);width:100%;
 }
-.select.placeholder{color:var(--black-600);}
 .popover footer{margin-top:8px;display:flex;justify-content:flex-end;gap:8px;}
 .btn-cancel{
   height:40px;padding:0 16px;border:1px solid var(--black-500);border-radius:8px;
   background:#fff;color:var(--slate);font-size:16px;font-weight:600;
 }
+.btn-cancel:hover{background:var(--gray-50);}
 .btn-go{
   display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border:0;
   border-radius:8px;background:var(--primary-500);color:#fff;font-size:16px;font-weight:600;
 }
 .btn-go:hover{background:var(--primary-600);}
-.btn-go[disabled]{background:var(--gray-300);cursor:not-allowed;}
 
-/* 잔여 이용건수 카드 — 문서 검사의 「이용권 선택」 카드와 동형 (h40·r8·border-primary-500) */
-.quota-card{
-  display:flex;align-items:center;height:40px;padding:0 16px;
-  border:1px solid var(--primary-500);border-radius:8px;background:#fff;
-  font-size:14px;font-weight:700;color:var(--primary-500);
-}
-.quota-card.empty{border-color:var(--gray-300);color:var(--gray-400);}
-
-/* ===== AlertDialog (실측: min-w630 · p32 · r8 · shadow 0 0 6px .45) ===== */
+/* ===== AlertDialog (모달 팝업) ===== */
 .overlay{
   position:absolute;inset:0;background:rgba(0,0,0,.32);
-  display:flex;align-items:center;justify-content:center;z-index:30;
+  display:flex;align-items:center;justify-content:center;z-index:40;
 }
 .alertdialog{
   min-width:630px;max-width:calc(100% - 80px);background:#fff;border-radius:8px;padding:32px;
@@ -204,9 +230,9 @@ button{font-family:inherit;cursor:pointer;}
 .alertdialog header{display:flex;flex-direction:column;gap:8px;}
 .alertdialog h3{
   display:flex;align-items:center;gap:8px;margin:0;
-  font-size:20px;font-weight:700;line-height:30px;color:var(--primary-500);
+  font-size:24px;font-weight:700;line-height:36px;color:var(--brand-ck);letter-spacing:-.4px;
 }
-.alertdialog h3 svg{fill:var(--primary-500);flex:0 0 24px;}
+.alertdialog h3 svg{fill:var(--brand-ck);flex:0 0 24px;}
 .alertdialog p{
   margin:0;font-size:16px;line-height:24px;color:var(--slate);white-space:pre-line;
 }
@@ -214,17 +240,17 @@ button{font-family:inherit;cursor:pointer;}
 
 /* ===== 차단 화면(미사용·만료) ===== */
 .blocked{
-  min-height:420px;display:flex;flex-direction:column;align-items:center;
+  min-height:440px;display:flex;flex-direction:column;align-items:center;
   justify-content:center;gap:14px;text-align:center;
 }
 .blocked .icon{width:56px;height:56px;fill:var(--black-500);}
-.blocked .msg{font-size:20px;font-weight:700;color:var(--slate);}
+.blocked .msg{font-size:24px;font-weight:700;line-height:36px;color:var(--slate);}
 
 /* ===== 주석 패널 (예시화면 전용) ===== */
-.notes{padding:24px 40px 60px;background:var(--page);}
+.notes{padding:24px 20px 60px;display:flex;justify-content:center;}
 .notecard{
-  background:#fff;border:1px solid #e5e7eb;border-radius:10px;padding:20px 22px;
-  max-width:1040px;
+  background:#fff;border:1px solid #d8dbe0;border-radius:10px;padding:20px 22px;
+  width:100%;max-width:1040px;
 }
 .notecard h4{margin:0 0 12px;font-size:14px;font-weight:800;letter-spacing:-.2px;}
 .notecard table{width:100%;border-collapse:collapse;font-size:13px;}
@@ -233,7 +259,7 @@ button{font-family:inherit;cursor:pointer;}
 }
 .notecard th{width:120px;color:var(--black-600);font-weight:600;white-space:nowrap;}
 .notecard code{
-  background:var(--gray-100);border-radius:4px;padding:1px 5px;font-size:12.5px;
+  background:#f1f2f4;border-radius:4px;padding:1px 5px;font-size:12.5px;
   font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
 }
 .notecard .warn{color:#b45309;}
@@ -264,51 +290,109 @@ button{font-family:inherit;cursor:pointer;}
 <!-- ========================= 앱 셸 ========================= -->
 <div class="app">
 
-  <!-- 사이드바 (실측 복제) -->
-  <aside class="sidebar">
-    <img class="logo" alt="Copy Killer" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22150%22%20height%3D%2220%22%20viewBox%3D%220%200%20150%2020%22%3E%3Ctext%20x%3D%220%22%20y%3D%2216%22%20font-family%3D%22Pretendard%2CArial%22%20font-size%3D%2217%22%20font-weight%3D%22800%22%20fill%3D%22%233e4448%22%3ECopy%3C%2Ftext%3E%3Ctext%20x%3D%2247%22%20y%3D%2216%22%20font-family%3D%22Pretendard%2CArial%22%20font-size%3D%2217%22%20font-weight%3D%22800%22%20fill%3D%22%2300c2ff%22%3EKiller%3C%2Ftext%3E%3C%2Fsvg%3E" />
-    <nav class="nav">
-      <div class="group active"><span data-i18n="nav.ck">카피킬러</span><span>›</span></div>
-      <div class="sub">
-        <a href="#" data-i18n="nav.doc">문서 검사</a>
-        <!-- ④ 미사용·만료: 이 메뉴 자체가 미표출된다 (명세: "사용여부 N/만료 도메인은 메뉴 미표출") -->
-        <a href="#" class="active" id="nav-cv">
-          <span data-i18n="nav.cv">참고문헌 유효성 검증</span>
-          <span class="badge-free">Free</span>
-        </a>
-        <a href="#" data-i18n="nav.visual">표이미지 표절검사</a>
-        <a href="#" data-i18n="nav.record">생활기록부 검사</a>
+  <!-- ---------- LNB (카피킬러 실측 복제) ---------- -->
+  <aside class="lnb">
+    <div class="lnb-inner">
+
+      <div class="lnb-header">
+        <img alt="ck-logo" src="data:image/png;base64,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" />
+        <button class="lnb-trigger" title="메뉴 접기/펴기" aria-label="메뉴 접기/펴기">
+          <svg width="18" height="14" viewBox="0 0 18 14" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M15.6667 0.333496H2.33341C1.41675 0.333496 0.666748 1.0835 0.666748 2.00016V12.0002C0.666748 12.9168 1.41675 13.6668 2.33341 13.6668H15.6667C16.5834 13.6668 17.3334 12.9168 17.3334 12.0002V2.00016C17.3334 1.0835 16.5834 0.333496 15.6667 0.333496ZM5.66675 12.0002H2.33341V2.00016H5.66675V12.0002ZM15.6667 12.0002H7.33342V2.00016H15.6667V12.0002Z"/><path d="M15 6.25H10.7357L12.8714 4.0575L11.8571 3L8 7L11.8571 11L12.8643 9.9425L10.7357 7.75H15V6.25Z"/></svg>
+        </button>
       </div>
-      <div class="item" data-i18n="nav.ext">카피킬러 eXtension</div>
-      <div class="item" data-i18n="nav.write">문서 작성</div>
-      <div class="item" data-i18n="nav.ticket">이용권 관리</div>
-    </nav>
-    <div class="bottom">
-      <div class="item"><span data-i18n="nav.gk">GPT Killer 인사이드</span><span class="badge-hot">Hot</span></div>
-      <div class="item" data-i18n="nav.terms">읽고 쓰는, CK텀즈</div>
-      <div class="item" data-i18n="nav.lab">카피킬러 연구소</div>
-      <div class="divider"></div>
-      <div class="item" data-i18n="nav.my">마이페이지</div>
-      <div class="item" data-i18n="nav.cs">고객센터</div>
-      <div class="item" data-i18n="nav.logout">로그아웃</div>
+
+      <div class="lnb-content">
+        <div>
+          <ul class="lnb-menu">
+            <li>
+              <a class="mi active" href="#">
+                <span class="l">
+                  <span class="ico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="12" viewBox="0 0 20 12" fill="none"><path d="M20 0H13.0124L8.20592 4.89044L4.70801 8.44941L8.20592 12L20 0Z" fill="currentColor"/><path d="M6.98758 3.12354H0L5.22628 8.44943L8.72419 4.89046L6.98758 3.12354Z" fill="#3E4448"/></svg></span>
+                  <span data-i18n="nav.ck">카피킬러</span>
+                </span>
+                <span class="chev"><svg viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M6.18194 4.18185C6.35767 4.00611 6.6426 4.00611 6.81833 4.18185L9.81833 7.18185C9.90272 7.26624 9.95013 7.3807 9.95013 7.50005C9.95013 7.6194 9.90272 7.73386 9.81833 7.81825L6.81833 10.8182C6.6426 10.994 6.35767 10.994 6.18194 10.8182C6.0062 10.6425 6.0062 10.3576 6.18194 10.1819L8.86374 7.50005L6.18194 4.81825C6.0062 4.64251 6.0062 4.35759 6.18194 4.18185Z" fill="currentColor"/></svg></span>
+              </a>
+              <ul class="sub">
+                <li><a class="si" href="#"><span class="ico"></span><span class="txt" data-i18n="nav.doc">문서 검사</span></a></li>
+                <!-- ④ 미사용·만료: 이 메뉴 자체가 미표출된다 (명세: "사용여부 N/만료 도메인은 메뉴 미표출") -->
+                <li id="nav-cv"><a class="si active" href="#"><span class="ico"></span><span class="txt"><span data-i18n="nav.cv">참고문헌 유효성 검증</span><span class="badge-free">Free</span></span></a></li>
+                <li><a class="si" href="#"><span class="ico"></span><span class="txt" data-i18n="nav.visual">표이미지 표절검사</span></a></li>
+                <li><a class="si" href="#"><span class="ico"></span><span class="txt" data-i18n="nav.record">생활기록부 검사</span></a></li>
+              </ul>
+            </li>
+
+            <li><a class="mi" href="#"><span class="l">
+              <span class="ico"><svg viewBox="0 0 512 512" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg"><path fill="none" stroke="#6a7282" stroke-linecap="round" stroke-linejoin="round" stroke-width="32" d="M413.66 246.1H386a2 2 0 0 1-2-2v-77.24A38.86 38.86 0 0 0 345.14 128H267.9a2 2 0 0 1-2-2V98.34c0-27.14-21.5-49.86-48.64-50.33a49.53 49.53 0 0 0-50.4 49.51V126a2 2 0 0 1-2 2H87.62A39.74 39.74 0 0 0 48 167.62V238a2 2 0 0 0 2 2h26.91c29.37 0 53.68 25.48 54.09 54.85.42 29.87-23.51 57.15-53.29 57.15H50a2 2 0 0 0-2 2v70.38A39.74 39.74 0 0 0 87.62 464H158a2 2 0 0 0 2-2v-20.93c0-30.28 24.75-56.35 55-57.06 30.1-.7 57 20.31 57 50.28V462a2 2 0 0 0 2 2h71.14A38.86 38.86 0 0 0 384 425.14V348a2 2 0 0 1 2-2h27.7c27.14 0 49.86-21.5 50.33-48.64a49.53 49.53 0 0 0-50.37-51.26Z"/></svg></span>
+              <span data-i18n="nav.ext">카피킬러 eXtension</span></span></a></li>
+
+            <li><a class="mi" href="#"><span class="l">
+              <span class="ico"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.54167 4.00008H4.20833V6.50008H12.5417V4.00008H14.2083V8.16675H15.875V4.00008C15.875 3.08341 15.125 2.33341 14.2083 2.33341H10.725C10.375 1.36675 9.45833 0.666748 8.375 0.666748C7.29167 0.666748 6.375 1.36675 6.025 2.33341H2.54167C1.625 2.33341 0.875 3.08341 0.875 4.00008V15.6667C0.875 16.5834 1.625 17.3334 2.54167 17.3334H7.54167V15.6667H2.54167V4.00008ZM8.375 2.33341C8.83333 2.33341 9.20833 2.70841 9.20833 3.16675C9.20833 3.62508 8.83333 4.00008 8.375 4.00008C7.91667 4.00008 7.54167 3.62508 7.54167 3.16675C7.54167 2.70841 7.91667 2.33341 8.375 2.33341Z" fill="currentColor"/><path d="M16.7083 11.0834L15.2917 9.66675L11.125 13.8334L9.70833 12.4167L8.29167 13.8334L11.125 16.6667L16.7083 11.0834Z" fill="currentColor"/></svg></span>
+              <span data-i18n="nav.write">문서 작성</span></span></a></li>
+
+            <li><a class="mi" href="#"><span class="l">
+              <span class="ico"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M18.3332 8.33325V4.99992C18.3332 4.07492 17.5832 3.33325 16.6665 3.33325H3.33317C2.4165 3.33325 1.67484 4.07492 1.67484 4.99992V8.33325C2.5915 8.33325 3.33317 9.08325 3.33317 9.99992C3.33317 10.9166 2.5915 11.6666 1.6665 11.6666V14.9999C1.6665 15.9166 2.4165 16.6666 3.33317 16.6666H16.6665C17.5832 16.6666 18.3332 15.9166 18.3332 14.9999V11.6666C17.4165 11.6666 16.6665 10.9166 16.6665 9.99992C16.6665 9.08325 17.4165 8.33325 18.3332 8.33325ZM16.6665 7.11659C15.6748 7.69159 14.9998 8.77492 14.9998 9.99992C14.9998 11.2249 15.6748 12.3083 16.6665 12.8833V14.9999H3.33317V12.8833C4.32484 12.3083 4.99984 11.2333 4.99984 9.99992C4.99984 8.76659 4.33317 7.69159 3.33317 7.11659V4.99992H16.6665V7.11659Z"/></svg></span>
+              <span data-i18n="nav.ticket">이용권 관리</span></span></a></li>
+          </ul>
+
+          <div style="height:8px"></div>
+        </div>
+
+        <ul class="lnb-menu">
+          <li><a class="mi" href="#"><span class="l">
+            <span class="ico"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M13.0001 11.33L18.0001 18H6.00005L11.0001 11.33V6H13.0001M15.9601 4H8.04005C7.62005 4 7.39005 4.48 7.65005 4.81L9.00005 6.5V10.67L3.20005 18.4C2.71005 19.06 3.18005 20 4.00005 20H20.0001C20.8201 20 21.2901 19.06 20.8001 18.4L15.0001 10.67V6.5L16.3501 4.81C16.6101 4.48 16.3801 4 15.9601 4Z" fill="currentColor"/></svg></span>
+            <span data-i18n="nav.gk">GPT Killer 인사이드</span><span class="badge-hot">Hot</span></span></a></li>
+          <li><a class="mi" href="#"><span class="l">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke="#6a7282" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"><path d="M8 21h-2a3 3 0 0 1 -3 -3v-1h5.5"/><path d="M17 8.5v-3.5a2 2 0 1 1 2 2h-2"/><path d="M19 3h-11a3 3 0 0 0 -3 3v11"/><path d="M9 7h4"/><path d="M9 11h4"/><path d="M18.42 12.61a2.1 2.1 0 0 1 2.97 2.97l-6.39 6.42h-3v-3z"/></svg></span>
+            <span data-i18n="nav.terms">읽고 쓰는, CK텀즈</span></span></a></li>
+          <li><a class="mi" href="#">
+            <span class="l">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M4 10h3v7H4v-7zm6.5 0h3v7h-3v-7zM2 19h20v3H2v-3zm15-9h3v7h-3v-7zM12 1 2 6v2h20V6L12 1z"/></svg></span>
+              <span data-i18n="nav.lab">카피킬러 연구소</span>
+            </span>
+            <span class="chev"><svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.77083 7.49998L10.0042 10.7333L13.2375 7.49998C13.5625 7.17498 14.0875 7.17498 14.4125 7.49998C14.7375 7.82498 14.7375 8.34998 14.4125 8.67498L10.5875 12.5C10.2625 12.825 9.7375 12.825 9.4125 12.5L5.5875 8.67498C5.2625 8.34998 5.2625 7.82498 5.5875 7.49998C5.9125 7.18331 6.44583 7.17498 6.77083 7.49998Z"/></svg></span>
+          </a></li>
+
+          <li><div class="lnb-divider"></div></li>
+
+          <li><a class="mi" href="#"><span class="l">
+            <span class="ico"><svg viewBox="0 0 512 512" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M256 256a112 112 0 1 0-112-112 112 112 0 0 0 112 112zm0 32c-69.42 0-208 42.88-208 128v64h416v-64c0-85.12-138.58-128-208-128z"/></svg></span>
+            <span data-i18n="nav.my">마이페이지</span></span></a></li>
+          <li><a class="mi" href="#">
+            <span class="l">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M11 18h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm0-14c-2.21 0-4 1.79-4 4h2c0-1.1.9-2 2-2s2 .9 2 2c0 2-3 1.75-3 5h2c0-2.25 3-2.5 3-5 0-2.21-1.79-4-4-4z"/></svg></span>
+              <span data-i18n="nav.cs">고객센터</span>
+            </span>
+            <span class="chev"><svg viewBox="0 0 20 20" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M6.77083 7.49998L10.0042 10.7333L13.2375 7.49998C13.5625 7.17498 14.0875 7.17498 14.4125 7.49998C14.7375 7.82498 14.7375 8.34998 14.4125 8.67498L10.5875 12.5C10.2625 12.825 9.7375 12.825 9.4125 12.5L5.5875 8.67498C5.2625 8.34998 5.2625 7.82498 5.5875 7.49998C5.9125 7.18331 6.44583 7.17498 6.77083 7.49998Z"/></svg></span>
+          </a></li>
+          <li><a class="mi" href="#"><span class="l">
+            <span class="ico"><svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="m17 8-1.41 1.41L17.17 11H9v2h8.17l-1.58 1.58L17 16l4-4-4-4zM5 5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2H5V5z"/></svg></span>
+            <span data-i18n="nav.logout">로그아웃</span></span></a></li>
+        </ul>
+      </div>
     </div>
   </aside>
 
-  <!-- 본문 -->
+  <!-- ---------- 본문 ---------- -->
   <div class="main">
 
     <!-- ①②③ 공통: 업로드 화면 -->
-    <div id="view-upload">
+    <div id="view-upload" style="display:flex;flex-direction:column;flex:1;">
       <div class="main-body">
-        <h2 data-i18n="page.title">참고문헌 유효성 검증</h2>
-        <p class="lead" data-i18n="page.lead">카피킬러 100억건 DB와 비교하여 참고문헌이 실재 있는지 여부를 검증합니다.</p>
+        <h1 class="page-h1" data-i18n="page.title">참고문헌 유효성 검증</h1>
+        <p class="page-lead" data-i18n="page.lead">카피킬러 100억건 DB와 비교하여 참고문헌이 실재 있는지 여부를 검증합니다.</p>
 
         <div class="dropzone">
           <p class="big" data-i18n="up.drag">파일을 여기에 드래그 &amp; 드롭 하거나</p>
           <div class="btns">
-            <button class="btn-outline-primary" data-i18n="up.direct">직접 입력</button>
+            <button class="btn-outline-primary">
+              <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a1 1 0 0 0 0-1.41l-2.34-2.34a1 1 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>
+              <span data-i18n="up.direct">직접 입력</span>
+            </button>
             <span class="or" data-i18n="up.or">또는</span>
-            <button class="btn-outline-primary" data-i18n="up.file">파일 업로드</button>
+            <button class="btn-outline-primary">
+              <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z"/></svg>
+              <span data-i18n="up.file">파일 업로드</span>
+            </button>
           </div>
           <div class="meta">
             <div data-i18n="up.size">업로드 가능 용량 : 100 MB</div>
@@ -333,11 +417,11 @@ button{font-family:inherit;cursor:pointer;}
         <button class="btn-ghost">‹ <span data-i18n="up.back">뒤로가기</span></button>
         <button class="btn-primary" data-i18n="up.check">검사하기</button>
 
-        <!-- ===== 문서유형 설정 팝오버 — [검사하기]가 여는 실제 팝오버 ===== -->
+        <!-- ===== 문서유형 설정 팝오버 — 운영 화면 그대로 유지한다.
+                 이용 건수 안내는 여기에 넣지 않고, [검사 시작] 클릭 후 모달로 띄운다. ===== -->
         <div class="popwrap">
           <div class="popover" role="dialog" aria-modal="false">
             <h5 data-i18n="pop.title">문서유형 설정</h5>
-
             <section>
               <span class="label" data-i18n="pop.doctype">문서 유형</span>
               <button class="select">
@@ -345,16 +429,9 @@ button{font-family:inherit;cursor:pointer;}
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="#3e4448" aria-hidden="true"><path d="M6.77083 7.49998L10.0042 10.7333L13.2375 7.49998C13.5625 7.17498 14.0875 7.17498 14.4125 7.49998C14.7375 7.82498 14.7375 8.34998 14.4125 8.67498L10.5875 12.5C10.2625 12.825 9.7375 12.825 9.4125 12.5L5.5875 8.67498C5.2625 8.34998 5.2625 7.82498 5.5875 7.49998C5.9125 7.18331 6.44583 7.17498 6.77083 7.49998Z"/></svg>
               </button>
             </section>
-
-            <!--
-              ※ 이 팝오버는 현재 운영 화면과 동일하게 유지한다.
-                 잔여 이용건수 안내는 여기에 넣지 않고, 아래 [검사 시작]을 누른 뒤
-                 별도 모달 팝업으로 출력한다.
-            -->
-
             <footer>
               <button class="btn-cancel" data-i18n="pop.cancel">취소</button>
-              <button class="btn-go" id="btn-start">
+              <button class="btn-go">
                 <svg width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
                   <path d="M20 0H13.0124L8.20592 4.89044L4.70801 8.44941L8.20592 12L20 0Z" fill="currentColor"/>
                   <path d="M6.98758 3.12354H0L5.22628 8.44943L8.72419 4.89046L6.98758 3.12354Z" fill="#3E4448"/>
@@ -379,7 +456,7 @@ button{font-family:inherit;cursor:pointer;}
     </div>
 
     <!-- ① 잔여 안내(한정) — [검사 시작] 클릭 시점에 뜨는 모달 팝업.
-         확인(=[검사 시작]) 후 실제 검사가 진행되고 이 시점에 1회 선차감된다. -->
+         확인(=[검사 시작]) 후 검사가 진행되고 이 시점에 1회 선차감된다. -->
     <div id="overlay-remain" class="overlay hide">
       <div class="alertdialog" role="alertdialog" aria-modal="true">
         <header>
@@ -387,11 +464,11 @@ button{font-family:inherit;cursor:pointer;}
             <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 15H13V17H11V15ZM11 7H13V13H11V7ZM11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20Z"/></svg>
             <span data-i18n="copy.remainTitle">이용 건수 안내</span>
           </h3>
-          <!-- 확정 카피: `오늘 남은 이용 건수: {N}건` -->
-          <p data-i18n="copy.remain">오늘 남은 이용 건수: 2건</p>
+          <p data-i18n="copy.remain">검사 시작 시 이용건수가 즉시 차감됩니다.
+검사를 진행하시겠습니까?</p>
         </header>
         <footer>
-          <button class="btn-cancel" data-i18n="pop.cancel">취소</button>
+          <button class="btn-cancel" data-i18n="copy.close">닫기</button>
           <button class="btn-go">
             <svg width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
               <path d="M20 0H13.0124L8.20592 4.89044L4.70801 8.44941L8.20592 12L20 0Z" fill="currentColor"/>
@@ -417,7 +494,7 @@ button{font-family:inherit;cursor:pointer;}
 고객님께 꼭 필요한 서비스를 제공할 수 있도록 의견을 들려주세요.</p>
         </header>
         <footer>
-          <button class="btn-cancel" data-i18n="copy.exClose">닫기</button>
+          <button class="btn-cancel" data-i18n="copy.close">닫기</button>
           <button class="btn-go" style="gap:0" data-i18n="copy.exCta">의견 남기기</button>
         </footer>
       </div>
@@ -429,17 +506,15 @@ button{font-family:inherit;cursor:pointer;}
 <!-- ========================= 상태별 주석 ========================= -->
 <div class="notes">
   <div class="notecard">
-    <h4 id="note-title">① 잔여 안내(한정) — 일일한도 있는 도메인</h4>
-    <table>
-      <tbody id="note-body"></tbody>
-    </table>
+    <h4 id="note-title">① 잔여 안내(한정)</h4>
+    <table><tbody id="note-body"></tbody></table>
   </div>
 </div>
 
 <script>
 /* ============================================================================
-   확정 카피 (docs/[CK] … 기능단위명세 … md 「이용자 안내 정책 (문구)」)
-   ── 아래 copy.* 값은 명세 확정 문구다. 임의 수정 금지.
+   확정 카피 (docs/[CK] … 기능단위명세 … md 「이용자 안내 정책」)
+   ── copy. 계열은 명세 확정 문구다. 임의 수정 금지.
    ── nav. / page. / up. / pop. 계열은 화면 재현용 UI 라벨(일본어는 참고용 가안).
    ============================================================================ */
 var I18N = {
@@ -459,12 +534,11 @@ var I18N = {
     'pop.cancel':'취소','pop.start':'검사 시작',
     /* ↓↓↓ 명세 확정 카피 ↓↓↓ */
     'copy.remainTitle':'이용 건수 안내',
-    'copy.remain':'오늘 남은 이용 건수: 2건',
-    'copy.unlimited':'이용 건수: 무제한',
+    'copy.remain':'검사 시작 시 이용건수가 즉시 차감됩니다.\n검사를 진행하시겠습니까?',
     'copy.blocked':'현재 이용할 수 없는 서비스입니다.',
     'copy.exTitle':'이용 건수 소진',
     'copy.exBody':'오늘 사용할 수 있는 3회를 모두 사용했습니다.\n내일(오전 0시) 이후 다시 이용하실 수 있습니다.\n고객님께 꼭 필요한 서비스를 제공할 수 있도록 의견을 들려주세요.',
-    'copy.exClose':'닫기',
+    'copy.close':'닫기',
     'copy.exCta':'의견 남기기'
   },
   ja: {
@@ -482,13 +556,12 @@ var I18N = {
     'pop.title':'文書タイプ設定','pop.doctype':'文書タイプ','pop.doctypeval':'学位論文',
     'pop.cancel':'キャンセル','pop.start':'検査開始',
     /* ↓↓↓ 명세 확정 카피(日本語) ↓↓↓ */
-    'copy.remainTitle':'利用回数のご案内',        /* ※ 제목은 명세에 없음 — CM 검수 필요(가안) */
-    'copy.remain':'本日の残り利用回数: 2回',
-    'copy.unlimited':'利用回数: 無制限',
+    'copy.remainTitle':'利用回数のご案内',      /* 제목은 명세에 없음 — CM 검수 필요(가안) */
+    'copy.remain':'検査開始時に利用回数が即時に差し引かれます。\n検査を進めますか？',
     'copy.blocked':'現在ご利用いただけないサービスです。',
-    'copy.exTitle':'利用回数の上限に達しました',   /* ※ 제목은 명세에 없음 — CM 검수 필요(가안) */
+    'copy.exTitle':'利用回数の上限に達しました', /* 제목은 명세에 없음 — CM 검수 필요(가안) */
     'copy.exBody':'本日ご利用いただける3回をすべて使用しました。\n明日（午前0時）以降に再度ご利用いただけます。\nお客様に本当に必要なサービスを提供できるよう、ご意見をお聞かせください。',
-    'copy.exClose':'閉じる',
+    'copy.close':'閉じる',
     'copy.exCta':'ご意見を送る'
   }
 };
@@ -500,18 +573,18 @@ var NOTES = {
     rows:[
       ['정책 조건','사용여부 <code>사용함</code> · 이용기간 유효 · 일일한도 <code>3</code> · 당일 확정 사용 <code>1</code> → 잔여 <code>2</code>'],
       ['동선','<code>[검사하기]</code> → 「문서유형 설정」 팝오버(문서 유형 선택) → <code>[검사 시작]</code> <b>클릭</b> → <b>이 모달 팝업</b> → 모달의 <code>[검사 시작]</code>으로 확인 → 검사 진행'],
-      ['노출 시점','<b><code>[검사 시작]</code>을 클릭한 시점</b>에 모달 팝업으로 출력한다. <b>「문서유형 설정」 팝오버 안에는 넣지 않는다</b>(팝오버는 현재 운영 화면 그대로 유지).'],
-      ['확정 문구','<code>오늘 남은 이용 건수: {N}건</code> / <code>本日の残り利用回数: {N}回</code>'],
-      ['{N} 산식','<code>{N} = 일일한도 − 당일 확정 사용</code> · 리셋 = 익일 00:00(내부 기준 KST, 사용자 문구엔 미표기)'],
-      ['차감 기준','모달에서 확인해 검사가 <b>실행되는 시점</b>에 1회 <b>선차감</b> → 최종 실패 시 <b>복원</b> / 최종 성공 시 <b>유지</b>. 결과적으로 성공한 검사만 소모. 모달에서 <code>[취소]</code>하면 차감되지 않는다.'],
-      ['제목','<span class="warn">제목 <code>이용 건수 안내</code>는 이 화면에서 새로 확정한 문자열이다(2026-08-07). 명세 「이용자 안내 정책」에 추가 필요. 日本語 <code>利用回数のご案内</code>는 가안 — CM 검수 필요.</span>']
+      ['노출 시점','<b><code>[검사 시작]</code>을 클릭한 시점</b>에 모달 팝업으로 출력한다. <b>「문서유형 설정」 팝오버 안에는 넣지 않는다</b>(팝오버는 운영 화면 그대로 유지).'],
+      ['문구','제목 <code>이용 건수 안내</code> · 본문 <code>검사 시작 시 이용건수가 즉시 차감됩니다. / 검사를 진행하시겠습니까?</code> · 버튼 <code>[닫기][검사 시작]</code>'],
+      ['차감 기준','모달에서 확인해 검사가 <b>실행되는 시점</b>에 1회 <b>선차감</b> → 최종 실패 시 <b>복원</b> / 최종 성공 시 <b>유지</b>. 결과적으로 성공한 검사만 소모. 모달에서 <code>[닫기]</code>하면 차감되지 않는다.'],
+      ['확정 문자열','<span class="warn">이 모달 문구(제목·본문)는 2026-08-07에 새로 확정한 문자열이다. 명세 「이용자 안내 정책」에 반영 필요. 日本語 <code>利用回数のご案内</code> / <code>検査開始時に利用回数が即時に差し引かれます。</code> 는 가안 — CM 검수 필요.</span>'],
+      ['미해결','<span class="warn">기존 확정 카피 <code>오늘 남은 이용 건수: {N}건</code> / <code>本日の残り利用回数: {N}回</code> 는 이 모달에서 제거되어 <b>현재 어느 화면에도 노출되지 않는다</b>. 잔여 건수 <code>{N}</code>을 어디에 표시할지 미정 — 확인 필요.</span>']
     ]
   },
   unlimited: {
     title:'② 무제한 — 안내 미노출(모달 없이 곧바로 검사 진행)',
     rows:[
       ['정책 조건','일일한도 <code>무제한</code>'],
-      ['화면 처리','<code>[검사 시작]</code>을 눌러도 <b>모달을 띄우지 않고 곧바로 검사가 진행된다</b>. 그래서 이 탭에는 아무 안내도 보이지 않는다(현재 운영 화면과 동일).'],
+      ['화면 처리','<code>[검사 시작]</code>을 눌러도 <b>모달을 띄우지 않고 곧바로 검사가 진행된다</b>. 그래서 이 탭에는 아무 안내도 보이지 않는다(운영 화면과 동일).'],
       ['명세와의 관계','명세에는 <code>이용 건수: 무제한</code> / <code>利用回数: 無制限</code> 카피가 정의돼 있으나, <b>화면에서는 미노출</b>로 확정했다(2026-08-07). 명세 표는 그대로 유지한다.'],
       ['소진 차단','무제한 도메인에서는 소진 차단이 발생하지 않는다.']
     ]
@@ -526,14 +599,14 @@ var NOTES = {
       ['시간 표기','재이용 시점은 <code>내일(오전 0시)</code>로만 표기 — 사용자 문구에 <code>KST</code>를 표기하지 않는다(내부 기준 시간대는 KST 유지).'],
       ['CTA','<code>[의견 남기기]</code> / <code>[ご意見を送る]</code> → 의견 수집 폼·링크. 연결 대상·수집 방식은 이용자 서비스 측에서 정의. 소진 상태는 당일 1회 이상 이용한 사용자이므로 항상 노출된다.'],
       ['버튼 상태','<code>[검사 시작]</code> 버튼은 <b>비활성하지 않는다</b> — 최종 판정은 선차감 시도 시점(=클릭 시점)에 서버가 하므로, 클릭을 받아 이 모달로 차단한다.'],
-      ['제목','<span class="warn">제목 <code>이용 건수 소진</code>은 이 화면에서 새로 확정한 문자열이다(2026-08-07). 명세 「이용자 안내 정책」에 추가 필요. 日本語 제목 <code>利用回数の上限に達しました</code>는 가안 — CM 검수 필요.</span>']
+      ['제목','<span class="warn">제목 <code>이용 건수 소진</code>은 이 화면에서 새로 확정한 문자열이다(2026-08-07). 日本語 제목 <code>利用回数の上限に達しました</code>는 가안 — CM 검수 필요.</span>']
     ]
   },
   blocked: {
     title:'④ 미사용·만료 — 메뉴 미표출 + 우회 접근 차단',
     rows:[
       ['정책 조건','사용여부 <code>사용 안 함</code> 또는 이용기간 만료'],
-      ['원칙','좌측 사이드바에서 <code>참고문헌 유효성 검증</code> 메뉴가 <b>미표출</b>된다(위 사이드바에서 사라진 상태 확인).'],
+      ['원칙','좌측 LNB에서 <code>참고문헌 유효성 검증</code> 메뉴가 <b>미표출</b>된다(위 사이드바에서 사라진 상태 확인).'],
       ['노출 시점','직접 주소·iframe 등으로 우회 접근했을 때만 차단 문구를 출력한다.'],
       ['확정 문구','<code>현재 이용할 수 없는 서비스입니다.</code> / <code>現在ご利用いただけないサービスです。</code>'],
       ['잔여 안내','이 상태에서는 잔여 이용건수를 안내하지 않는다(만료·미사용 사실만 알린다).']
