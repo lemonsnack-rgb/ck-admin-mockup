@@ -19,9 +19,11 @@
       - AlertDialog: min-w 630px / padding 32px / radius 8px / shadow 0 0 6px rgba(0,0,0,.45)
       - primary-500 #00c2ff · primary-600 #0097d4 · primary-50 #effaff · slate #3e4448
       - black-500 #939395 · black-600 #7d7d80 · 폰트 Pretendard
-  · 노출 시점은 기존 「문서 검사」와 동일한 패턴을 따른다 —
-    [검사하기] → 설정 팝오버(이용 건수 안내 확인) → [검사 시작].
-    (문서 검사의 「이용권 선택 / 무료 이용권 1개」 섹션과 같은 자리)
+  · 노출 시점 — 안내는 모두 [검사 시작]을 **클릭한 시점**의 **모달 팝업**으로 출력한다.
+      [검사하기] → 「문서유형 설정」 팝오버(문서 유형만) → [검사 시작] 클릭
+                 → 모달 팝업(잔여 안내 확인 / 소진 시 차단) → 확인 시 검사 진행·선차감
+    「문서유형 설정」 팝오버에는 이용 건수 안내를 넣지 않는다(현재 운영 화면 그대로).
+    무제한 도메인은 모달 자체를 띄우지 않고 곧바로 검사가 진행된다.
   ============================================================================
 -->
 <style>
@@ -345,15 +347,10 @@ button{font-family:inherit;cursor:pointer;}
             </section>
 
             <!--
-              ▼ 신규 추가 영역 — 잔여 이용건수 안내
-                · 위치   : 「문서 검사」의 「이용권 선택 / 무료 이용권 1개」 섹션과 같은 자리
-                · 문구   : `오늘 남은 이용 건수: {N}건` (기능단위명세 확정 카피 · 원문 그대로 한 줄)
-                · 무제한 : 섹션 자체 미노출 (② 탭)
+              ※ 이 팝오버는 현재 운영 화면과 동일하게 유지한다.
+                 잔여 이용건수 안내는 여기에 넣지 않고, 아래 [검사 시작]을 누른 뒤
+                 별도 모달 팝업으로 출력한다.
             -->
-            <section id="quota-section">
-              <span class="label" data-i18n="pop.quota">이용 건수</span>
-              <div class="quota-card" id="quota-card" data-i18n="copy.remain">오늘 남은 이용 건수: 2건</div>
-            </section>
 
             <footer>
               <button class="btn-cancel" data-i18n="pop.cancel">취소</button>
@@ -381,7 +378,32 @@ button{font-family:inherit;cursor:pointer;}
       </div>
     </div>
 
-    <!-- ③ 소진 차단 — [검사 시작] 클릭 시점에 뜨는 AlertDialog -->
+    <!-- ① 잔여 안내(한정) — [검사 시작] 클릭 시점에 뜨는 모달 팝업.
+         확인(=[검사 시작]) 후 실제 검사가 진행되고 이 시점에 1회 선차감된다. -->
+    <div id="overlay-remain" class="overlay hide">
+      <div class="alertdialog" role="alertdialog" aria-modal="true">
+        <header>
+          <h3>
+            <svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M11 15H13V17H11V15ZM11 7H13V13H11V7ZM11.99 2C6.47 2 2 6.48 2 12C2 17.52 6.47 22 11.99 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 11.99 2ZM12 20C7.58 20 4 16.42 4 12C4 7.58 7.58 4 12 4C16.42 4 20 7.58 20 12C20 16.42 16.42 20 12 20Z"/></svg>
+            <span data-i18n="copy.remainTitle">이용 건수 안내</span>
+          </h3>
+          <!-- 확정 카피: `오늘 남은 이용 건수: {N}건` -->
+          <p data-i18n="copy.remain">오늘 남은 이용 건수: 2건</p>
+        </header>
+        <footer>
+          <button class="btn-cancel" data-i18n="pop.cancel">취소</button>
+          <button class="btn-go">
+            <svg width="20" height="12" viewBox="0 0 20 12" fill="none" aria-hidden="true">
+              <path d="M20 0H13.0124L8.20592 4.89044L4.70801 8.44941L8.20592 12L20 0Z" fill="currentColor"/>
+              <path d="M6.98758 3.12354H0L5.22628 8.44943L8.72419 4.89046L6.98758 3.12354Z" fill="#3E4448"/>
+            </svg>
+            <span data-i18n="pop.start">검사 시작</span>
+          </button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- ③ 소진 차단 — [검사 시작] 클릭 시점에 뜨는 모달 팝업(진행 불가) -->
     <div id="overlay-exhausted" class="overlay hide">
       <div class="alertdialog" role="alertdialog" aria-modal="true">
         <header>
@@ -434,8 +456,9 @@ var I18N = {
     'up.ext':'업로드 가능 확장자 : *.hwp;*.hwpx;*.doc;*.docx;*.pdf;*.txt;',
     'up.ready':'검사 가능','up.del':'삭제','up.back':'뒤로가기','up.check':'검사하기',
     'pop.title':'문서유형 설정','pop.doctype':'문서 유형','pop.doctypeval':'학위논문',
-    'pop.quota':'이용 건수','pop.cancel':'취소','pop.start':'검사 시작',
+    'pop.cancel':'취소','pop.start':'검사 시작',
     /* ↓↓↓ 명세 확정 카피 ↓↓↓ */
+    'copy.remainTitle':'이용 건수 안내',
     'copy.remain':'오늘 남은 이용 건수: 2건',
     'copy.unlimited':'이용 건수: 무제한',
     'copy.blocked':'현재 이용할 수 없는 서비스입니다.',
@@ -457,8 +480,9 @@ var I18N = {
     'up.ext':'アップロード可能拡張子 : *.hwp;*.hwpx;*.doc;*.docx;*.pdf;*.txt;',
     'up.ready':'検査可能','up.del':'削除','up.back':'戻る','up.check':'検査する',
     'pop.title':'文書タイプ設定','pop.doctype':'文書タイプ','pop.doctypeval':'学位論文',
-    'pop.quota':'利用回数','pop.cancel':'キャンセル','pop.start':'検査開始',
+    'pop.cancel':'キャンセル','pop.start':'検査開始',
     /* ↓↓↓ 명세 확정 카피(日本語) ↓↓↓ */
+    'copy.remainTitle':'利用回数のご案内',        /* ※ 제목은 명세에 없음 — CM 검수 필요(가안) */
     'copy.remain':'本日の残り利用回数: 2回',
     'copy.unlimited':'利用回数: 無制限',
     'copy.blocked':'現在ご利用いただけないサービスです。',
@@ -475,18 +499,19 @@ var NOTES = {
     title:'① 잔여 안내(한정) — 일일한도가 설정된 도메인',
     rows:[
       ['정책 조건','사용여부 <code>사용함</code> · 이용기간 유효 · 일일한도 <code>3</code> · 당일 확정 사용 <code>1</code> → 잔여 <code>2</code>'],
-      ['노출 시점','<code>[검사하기]</code> → 「문서유형 설정」 팝오버 안. 기존 「문서 검사」의 <code>이용권 선택 / 무료 이용권 1개</code> 섹션과 같은 자리다.'],
+      ['동선','<code>[검사하기]</code> → 「문서유형 설정」 팝오버(문서 유형 선택) → <code>[검사 시작]</code> <b>클릭</b> → <b>이 모달 팝업</b> → 모달의 <code>[검사 시작]</code>으로 확인 → 검사 진행'],
+      ['노출 시점','<b><code>[검사 시작]</code>을 클릭한 시점</b>에 모달 팝업으로 출력한다. <b>「문서유형 설정」 팝오버 안에는 넣지 않는다</b>(팝오버는 현재 운영 화면 그대로 유지).'],
       ['확정 문구','<code>오늘 남은 이용 건수: {N}건</code> / <code>本日の残り利用回数: {N}回</code>'],
       ['{N} 산식','<code>{N} = 일일한도 − 당일 확정 사용</code> · 리셋 = 익일 00:00(내부 기준 KST, 사용자 문구엔 미표기)'],
-      ['차감 기준','<code>[검사 시작]</code> 실행 시 1회 <b>선차감</b> → 최종 실패 시 <b>복원</b> / 최종 성공 시 <b>유지</b>. 결과적으로 성공한 검사만 소모.'],
-      ['레이아웃 주','문서 검사의 이용권 카드는 <code>라벨 좌 / 개수 우</code> 분할이지만, 여기서는 <b>확정 카피 원문을 훼손하지 않기 위해 한 줄로 표기</b>했다.']
+      ['차감 기준','모달에서 확인해 검사가 <b>실행되는 시점</b>에 1회 <b>선차감</b> → 최종 실패 시 <b>복원</b> / 최종 성공 시 <b>유지</b>. 결과적으로 성공한 검사만 소모. 모달에서 <code>[취소]</code>하면 차감되지 않는다.'],
+      ['제목','<span class="warn">제목 <code>이용 건수 안내</code>는 이 화면에서 새로 확정한 문자열이다(2026-08-07). 명세 「이용자 안내 정책」에 추가 필요. 日本語 <code>利用回数のご案内</code>는 가안 — CM 검수 필요.</span>']
     ]
   },
   unlimited: {
-    title:'② 무제한 — 안내 미노출',
+    title:'② 무제한 — 안내 미노출(모달 없이 곧바로 검사 진행)',
     rows:[
       ['정책 조건','일일한도 <code>무제한</code>'],
-      ['화면 처리','「이용 건수」 섹션 <b>자체를 렌더링하지 않는다</b>. 현재 운영 중인 팝오버와 동일한 모습이 된다.'],
+      ['화면 처리','<code>[검사 시작]</code>을 눌러도 <b>모달을 띄우지 않고 곧바로 검사가 진행된다</b>. 그래서 이 탭에는 아무 안내도 보이지 않는다(현재 운영 화면과 동일).'],
       ['명세와의 관계','명세에는 <code>이용 건수: 무제한</code> / <code>利用回数: 無制限</code> 카피가 정의돼 있으나, <b>화면에서는 미노출</b>로 확정했다(2026-08-07). 명세 표는 그대로 유지한다.'],
       ['소진 차단','무제한 도메인에서는 소진 차단이 발생하지 않는다.']
     ]
@@ -495,12 +520,12 @@ var NOTES = {
     title:'③ 소진 차단 — 잔여 0으로 검사 시작이 막힐 때',
     rows:[
       ['정책 조건','사용여부 <code>사용함</code> · 이용기간 유효 · 일일한도 <code>3</code> · 당일 확정 사용 <code>3</code> → 잔여 <code>0</code>'],
-      ['노출 시점','팝오버의 <code>[검사 시작]</code>을 <b>클릭한 시점</b>에 중앙 AlertDialog로 출력하고 검사를 진행하지 않는다. (기존 「문서 검사」의 <code>이용권 충전</code> 다이얼로그와 동일한 컴포넌트)'],
+      ['노출 시점','① 과 동일하게 <code>[검사 시작]</code>을 <b>클릭한 시점</b>의 모달 팝업이지만, 내용이 차단 안내로 바뀌고 <b>검사를 진행하지 않는다</b>(차감 없음). 기존 「문서 검사」의 <code>이용권 충전</code> 다이얼로그와 동일한 컴포넌트.'],
       ['확정 문구','<code>오늘 사용할 수 있는 {일일한도}회를 모두 사용했습니다. / 내일(오전 0시) 이후 다시 이용하실 수 있습니다. / 고객님께 꼭 필요한 서비스를 제공할 수 있도록 의견을 들려주세요.</code> + <code>[의견 남기기]</code>'],
       ['{일일한도}','해당 도메인의 일일 이용 한도 수치를 그대로 노출한다(예시는 <code>3</code>).'],
       ['시간 표기','재이용 시점은 <code>내일(오전 0시)</code>로만 표기 — 사용자 문구에 <code>KST</code>를 표기하지 않는다(내부 기준 시간대는 KST 유지).'],
       ['CTA','<code>[의견 남기기]</code> / <code>[ご意見を送る]</code> → 의견 수집 폼·링크. 연결 대상·수집 방식은 이용자 서비스 측에서 정의. 소진 상태는 당일 1회 이상 이용한 사용자이므로 항상 노출된다.'],
-      ['팝오버 카드','팝오버의 잔여 카드는 같은 확정 카피에 <code>{N}=0</code>을 넣어 <code>오늘 남은 이용 건수: 0건</code>(회색)으로 표시한다. <b>[검사 시작]은 비활성하지 않는다</b> — 최종 판정은 선차감 시도 시점(=클릭 시점)에 서버가 하므로 클릭을 받아 차단 안내를 띄운다.'],
+      ['버튼 상태','<code>[검사 시작]</code> 버튼은 <b>비활성하지 않는다</b> — 최종 판정은 선차감 시도 시점(=클릭 시점)에 서버가 하므로, 클릭을 받아 이 모달로 차단한다.'],
       ['제목','<span class="warn">제목 <code>이용 건수 소진</code>은 이 화면에서 새로 확정한 문자열이다(2026-08-07). 명세 「이용자 안내 정책」에 추가 필요. 日本語 제목 <code>利用回数の上限に達しました</code>는 가안 — CM 검수 필요.</span>']
     ]
   },
@@ -528,31 +553,20 @@ function applyLang(){
 }
 
 function applyState(){
-  var upload  = document.getElementById('view-upload');
-  var blocked = document.getElementById('view-blocked');
-  var quota   = document.getElementById('quota-section');
-  var overlay = document.getElementById('overlay-exhausted');
-  var navCv   = document.getElementById('nav-cv');
-  var start   = document.getElementById('btn-start');
+  var upload   = document.getElementById('view-upload');
+  var blocked  = document.getElementById('view-blocked');
+  var ovRemain = document.getElementById('overlay-remain');
+  var ovEx     = document.getElementById('overlay-exhausted');
+  var navCv    = document.getElementById('nav-cv');
 
-  upload.classList.toggle('hide',  state === 'blocked');
-  blocked.classList.toggle('hide', state !== 'blocked');
-  navCv.classList.toggle('hide',   state === 'blocked');
-  quota.classList.toggle('hide',   state === 'unlimited');
-  overlay.classList.toggle('hide', state !== 'exhausted');
+  upload.classList.toggle('hide',   state === 'blocked');
+  blocked.classList.toggle('hide',  state !== 'blocked');
+  navCv.classList.toggle('hide',    state === 'blocked');
 
-  // 소진 상태에서도 [검사 시작]은 활성 — 클릭 시점에 차단 안내를 띄우는 방식이므로
-  start.disabled = false;
-
-  // 잔여 카드 문구
-  var card = document.getElementById('quota-card');
-  card.setAttribute('data-i18n', 'copy.remain');
-  card.classList.remove('empty');
-  if (state === 'exhausted') {
-    card.textContent = lang === 'ko' ? '오늘 남은 이용 건수: 0건' : '本日の残り利用回数: 0回';
-    card.classList.add('empty');
-    card.removeAttribute('data-i18n');
-  }
+  // 안내는 모두 [검사 시작] 클릭 시점의 모달 팝업으로 출력한다.
+  // 무제한(②)은 모달을 띄우지 않고 곧바로 검사가 진행된다 → 아무것도 노출되지 않는다.
+  ovRemain.classList.toggle('hide', state !== 'remain');
+  ovEx.classList.toggle('hide',     state !== 'exhausted');
 
   var n = NOTES[state];
   document.getElementById('note-title').textContent = n.title;
